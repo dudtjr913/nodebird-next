@@ -4,12 +4,7 @@ import { combineReducers } from 'redux';
 import user from './user';
 import post from './post';
 
-const initialState = {
-	user: {},
-	post: {},
-};
-
-const reducer = combineReducers({
+const rootReducer = combineReducers({
 	index: (state = {}, action) => {
 		switch (action.type) {
 			case HYDRATE:
@@ -26,4 +21,4 @@ const reducer = combineReducers({
 	post,
 });
 
-export default reducer;
+export default rootReducer;

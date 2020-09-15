@@ -4,14 +4,24 @@ next.js는 React의 프레임워크이기 때문에 import React from "react"를
 import React from 'react';
 import AppLayout from '../components/AppLayout';
 import Head from 'next/head';
+import { useSelector } from 'react-redux';
+import PostForm from '../components/PostForm';
+import PostCard from '../components/PostCard';
 
 const Home = () => {
+	const { isLoggedIn } = useSelector((state) => state.user);
+	const { mainPosts } = useSelector((state) => state.post);
 	return (
 		<>
 			<Head>
 				<title>메인화면 | NodeBird</title>
 			</Head>
-			<AppLayout>Hello, Next!</AppLayout>{' '}
+			<AppLayout>
+				{isLoggedIn && <PostForm />}
+				{mainPosts.map((post, index) => (
+					<PostCard key={post.id} post={post} />
+				))}
+			</AppLayout>
 		</>
 	);
 };
