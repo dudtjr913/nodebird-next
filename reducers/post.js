@@ -3,7 +3,7 @@ export const initialState = {
 		{
 			id: 1,
 			User: {
-				id: 1,
+				id: 'yeongseok',
 				nickname: '영석',
 			},
 			content: '과연 될까?',
@@ -42,7 +42,7 @@ const dummyPost = {
 	id: 2,
 	content: '더미데이터',
 	User: {
-		id: 1,
+		id: 'cheon',
 		nickname: '영석',
 	},
 	Images: [],
