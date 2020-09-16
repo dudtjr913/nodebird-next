@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import ZoomOn from './ZoomOn';
+import { PlusOutlined } from '@ant-design/icons';
 
 const PostImages = ({ images }) => {
 	const [zoom, setZoom] = useState(false);
@@ -59,9 +60,13 @@ const PostImages = ({ images }) => {
 					display: 'inline-block',
 					width: '50%',
 					textAlign: 'center',
+
 					verticalAlign: 'middle',
 				}}>
-				더보기
+				<PlusOutlined style={{ fontSize: '20px', cursor: 'pointer' }} />
+				<div style={{ fontSize: '20px', cursor: 'pointer' }}>
+					{`${images.length - 1}개의 사진 더보기`}
+				</div>
 			</div>
 			{zoom && <ZoomOn images={images} ZoomClose={ZoomClose} />}
 		</>
@@ -69,7 +74,7 @@ const PostImages = ({ images }) => {
 };
 
 PostImages.propTypes = {
-	images: PropTypes.arrayOf(PropTypes.object),
+	images: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default PostImages;

@@ -1,86 +1,56 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useRef, useEffect } from 'react';
 import Slider from 'react-slick';
-import styled, { createGlobalStyle } from 'styled-components';
-import { CloseOutlined } from '@ant-design/icons';
-
-const ZoomWrapper = styled.div`
-	position: fixed;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	z-index: 1000;
-	text-align: center;
-`;
-
-const HeaderWrapper = styled.header`
-	position: relative;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	background-color: white;
-	padding: 0px;
-	font-size: 20px;
-
-	& div {
-		line-height: 50px;
-		width: 100%;
-		margin: 0;
-		color: gray;
-	}
-`;
-
-const ButtonWrapper = styled(CloseOutlined)`
-	position: absolute;
-	right: 5px;
-	color: gray;
-`;
-
-const SliderWrapper = styled.div`
-	background-color: #090909;
-	height: calc(100% - 50px);
-`;
-
-const ImageWrapper = styled.div`
-	padding: 30px;
-	text-align: center;
-	& img {
-		margin: auto;
-		max-height: 700px;
-	}
-`;
-
-const GlobalSlick = createGlobalStyle`
- .slick-slide{
-	 display:inline-block;
- }
-`;
+import {
+	ZoomWrapper,
+	HeaderWrapper,
+	ButtonWrapper,
+	GlobalSlick,
+	SliderWrapper,
+	ImageWrapper,
+	Pages,
+} from './styles';
+import PropTypes from 'prop-types';
 
 const ZoomOn = ({ images, ZoomClose }) => {
+	const [count, setCount] = useState(1);
+	const ZoomInput = useRef();
+	const handleOnKeyDown = useCallback((e) => {
+		if (e.key === 'Escape') {
+			ZoomClose();
+		}
+	}, []);
+	useEffect(() => {
+		ZoomInput.current.focus();
+	}, []);
 	return (
-		<ZoomWrapper>
+		<ZoomWrapper onKeyDown={handleOnKeyDown}>
 			<HeaderWrapper>
 				<div>상세 이미지</div>
 				<ButtonWrapper onClick={ZoomClose}></ButtonWrapper>
 			</HeaderWrapper>
 			<GlobalSlick />
 			<SliderWrapper>
-				<div>
-					<Slider
-						infinite={true}
-						slidesToShow={1}
-						slidesToScroll={1}
-						arrows={false}>
-						{images.map((v) => (
-							<ImageWrapper key={v.src}>
-								<img src={v.src} alt={v.src} />
-							</ImageWrapper>
-						))}
-					</Slider>
-				</div>
+				<Slider
+					infinite={true}
+					slidesToShow={1}
+					slidesToScroll={1}
+					arrows={false}
+					beforeChange={(current, next) => setCount(next + 1)}>
+					{images.map((v) => (
+						<ImageWrapper ref={ZoomInput} key={v.src}>
+							<img src={v.src} alt={v.src} />
+						</ImageWrapper>
+					))}
+				</Slider>
+				<Pages>{`${count} / ${images.length}`}</Pages>
 			</SliderWrapper>
 		</ZoomWrapper>
 	);
+};
+
+ZoomOn.propTypes = {
+	images: PropTypes.arrayOf(PropTypes.object).isRequired,
+	ZoomClose: PropTypes.func.isRequired,
 };
 
 export default ZoomOn;

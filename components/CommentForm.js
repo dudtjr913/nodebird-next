@@ -1,13 +1,14 @@
 import React, { useCallback, useState } from 'react';
 import { Input, Form, Button } from 'antd';
+import PropTypes from 'prop-types';
 
-const CommentForm = ({ post }) => {
+const CommentForm = ({ comments }) => {
 	const [comment, setComment] = useState('');
 	const onChangeText = useCallback((e) => {
 		setComment(e.target.value);
 	}, []);
 	const onCommentSubmit = useCallback(() => {
-		console.log(post.Comments, comment);
+		console.log(comments, comment);
 		setComment('');
 	}, [comment]);
 	return (
@@ -30,6 +31,17 @@ const CommentForm = ({ post }) => {
 			</Form.Item>
 		</Form>
 	);
+};
+
+CommentForm.propTypes = {
+	comments: PropTypes.arrayOf(
+		PropTypes.shape({
+			User: PropTypes.shape({
+				nickname: PropTypes.string,
+			}),
+			content: PropTypes.string,
+		}),
+	),
 };
 
 export default CommentForm;
