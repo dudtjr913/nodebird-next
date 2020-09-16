@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Card, Popover, Button, Avatar } from 'antd';
+import { Card, Popover, Button, Avatar, Comment, List, Tooltip } from 'antd';
 import {
 	RetweetOutlined,
 	HeartOutlined,
@@ -10,6 +10,8 @@ import {
 import PostImages from './PostImages';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
+import CommentForm from './CommentForm';
+import moment from 'moment';
 
 const PostCard = ({ post }) => {
 	const [liked, setLiked] = useState(false);
@@ -57,7 +59,34 @@ const PostCard = ({ post }) => {
 					description={post.content}
 				/>
 			</Card>
-			<div>{commented && '댓글부분'}</div>
+			{commented && (
+				<div>
+					<CommentForm post={post} />
+					<List
+						header={`${post.Comments.length}개의 댓글`}
+						itemLayout="horizontal"
+						dataSource={post.Comments}
+						renderItem={(comments) => (
+							<li>
+								<Comment
+									actions={[<span key="reply-comment">답장</span>]}
+									author={comments.User.nickname}
+									avatar={
+										<Avatar>{comments.User.nickname[0].toUpperCase()}</Avatar>
+									}
+									content={comments.content}
+									datetime={
+										<Tooltip
+											title={moment().subtract().format('YYYY-MM-DD HH:mm:ss')}>
+											<span>{moment().subtract().fromNow()}</span>
+										</Tooltip>
+									}
+								/>
+							</li>
+						)}
+					/>
+				</div>
+			)}
 		</div>
 	);
 };
