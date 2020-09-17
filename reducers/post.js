@@ -6,7 +6,7 @@ export const initialState = {
 				id: 'yeongseok',
 				nickname: '영석',
 			},
-			content: '과연 될까?',
+			content: '과연 될까? #노드버드 #성공',
 			Images: [
 				{
 					src: 'https://velopert.com/wp-content/uploads/2016/03/react.png',
