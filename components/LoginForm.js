@@ -3,7 +3,7 @@ import { Form, Input, Button } from 'antd';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginRequestAction } from '../reducers/user';
+import { loginAction } from '../reducers/user';
 
 const ButtonWrapper = styled.div`
 	margin-top: 10px;
@@ -15,9 +15,9 @@ const FormWrapper = styled(Form)`
 
 const LoginForm = () => {
 	const dispatch = useDispatch();
-	const [id, setId] = useState('');
+	const [email, setId] = useState('');
 	const [password, setPassword] = useState('');
-	const { isLoggingIn } = useSelector((state) => state.user);
+	const { logInLoading } = useSelector((state) => state.user);
 
 	const onChangeId = useCallback((e) => {
 		setId(e.target.value);
@@ -28,19 +28,20 @@ const LoginForm = () => {
 	}, []);
 
 	const onSubmitForm = useCallback(() => {
-		console.log(id, password);
-		dispatch(loginRequestAction({ id, password }));
-	}, [id, password]);
+		console.log(email, password);
+		dispatch(loginAction({ email, password }));
+	}, [email, password]);
 
 	return (
 		<FormWrapper onFinish={onSubmitForm}>
 			<div>
-				<label htmlFor="user-id">아이디</label>
+				<label htmlFor="user-email">아이디</label>
 				<br />
 				<Input
-					name="user-id"
-					id="user-id"
-					value={id}
+					type="email"
+					name="user-email"
+					id="user-email"
+					value={email}
 					onChange={onChangeId}
 					required
 				/>
@@ -58,7 +59,7 @@ const LoginForm = () => {
 				/>
 			</div>
 			<ButtonWrapper>
-				<Button type="primary" htmlType="submit" loading={isLoggingIn}>
+				<Button type="primary" htmlType="submit" loading={logInLoading}>
 					로그인
 				</Button>
 				<Link href="/signup">

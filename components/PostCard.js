@@ -62,7 +62,7 @@ const PostCard = ({ post }) => {
 			</Card>
 			{commented && (
 				<div>
-					<CommentForm comments={post.Comments} />
+					<CommentForm post={post} />
 					<List
 						header={`${post.Comments.length}개의 댓글`}
 						itemLayout="horizontal"

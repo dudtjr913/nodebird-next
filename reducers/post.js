@@ -47,15 +47,29 @@ export const initialState = {
 		},
 	],
 	imagePaths: [],
-	postLoding: false,
+	postAddLoading: false,
+	postAddDone: false,
+	postAddError: false,
+
+	commentAddLoading: false,
+	commentAddDone: false,
+	commentAddError: false,
 };
 
 export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
 export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
 export const ADD_POST_FAILURE = 'ADD_POST_FAILURE';
 
-export const addRequestPost = {
-	type: ADD_POST_REQUEST,
+export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
+export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
+export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
+
+export const addPost = (data) => {
+	return { type: ADD_POST_REQUEST, data };
+};
+
+export const addComment = (data) => {
+	return { type: ADD_COMMENT_REQUEST, data };
 };
 
 const dummyPost = {
@@ -74,18 +88,48 @@ const reducer = (state = initialState, action) => {
 		case ADD_POST_REQUEST:
 			return {
 				...state,
-				postLoding: true,
+				postAddLoading: true,
+				postAddError: false,
 			};
 		case ADD_POST_SUCCESS:
+			const dummyContent = { ...dummyPost };
+			dummyContent.content = action.data;
 			return {
 				...state,
-				mainPosts: [dummyPost, ...state.mainPosts],
-				postLoding: false,
+				mainPosts: [dummyContent, ...state.mainPosts],
+				postAddLoading: false,
+				postAddDone: true,
+				postAddError: false,
 			};
 		case ADD_POST_FAILURE:
 			return {
 				...state,
-				postLoding: false,
+				postAddLoading: false,
+				postAddDone: false,
+				postAddError: action.error,
+			};
+		case ADD_COMMENT_REQUEST:
+			return {
+				...state,
+				commentAddLoading: true,
+				commentAddError: false,
+			};
+		case ADD_COMMENT_SUCCESS:
+			const dummyComment = { ...dummyPost };
+			dummyComment.Comments = action.data; // 아직 미구현
+			return {
+				...state,
+				mainPosts: [dummyComment, ...state.mainPosts],
+				commentAddLoading: false,
+				commentAddDone: true,
+				commentAddError: false,
+			};
+		case ADD_COMMENT_FAILURE:
+			return {
+				...state,
+				commentAddLoading: false,
+				commentAddDone: false,
+				commentAddError: action.error,
 			};
 		default:
 			return state;

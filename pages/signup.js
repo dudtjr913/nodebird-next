@@ -3,11 +3,17 @@ import AppLayout from '../components/AppLayout';
 import Head from 'next/head';
 import { Form, Input, Button, Checkbox } from 'antd';
 import UseInput from '../hooks/useInput';
+import { signUpAction } from '../reducers/user';
+import { useDispatch, useSelector } from 'react-redux';
 
 const SignUp = () => {
-	const [id, onChangeId] = UseInput('');
+	const [email, onChangeEmail] = UseInput('');
 	const [password, onChangePassword] = UseInput('');
 	const [nickname, onChangeNickname] = UseInput('');
+
+	const { signUpLoading } = useSelector((state) => state.user);
+
+	const dispatch = useDispatch();
 
 	const [passwordCheck, setPasswordCheck] = useState('');
 	const [passwordError, setPasswordError] = useState(false);
@@ -33,8 +39,9 @@ const SignUp = () => {
 		if (!term) {
 			return setTermError(true);
 		}
-		console.log(id, nickname, password, passwordCheck);
-	}, [term, password, passwordCheck]);
+		console.log(email, nickname, password, passwordCheck);
+		dispatch(signUpAction({ email, nickname, password }));
+	}, [email, nickname, term, password, passwordCheck]);
 	return (
 		<AppLayout>
 			<Head>
@@ -42,8 +49,14 @@ const SignUp = () => {
 			</Head>
 			<Form onFinish={onSubmit}>
 				<div>
-					<label htmlFor="user-id">아이디</label>
-					<Input name="user-id" value={id} required onChange={onChangeId} />
+					<label htmlFor="user-email">이메일</label>
+					<Input
+						type="email"
+						name="user-email"
+						value={email}
+						required
+						onChange={onChangeEmail}
+					/>
 				</div>
 				<div>
 					<label htmlFor="user-nickname">닉네임</label>
@@ -81,7 +94,7 @@ const SignUp = () => {
 					</Checkbox>
 				</div>
 				{termError && <div style={{ color: 'red' }}>약관에 동의해주세요.</div>}
-				<Button htmlType="submit" type="primary">
+				<Button loading={signUpLoading} htmlType="submit" type="primary">
 					회원가입
 				</Button>
 			</Form>

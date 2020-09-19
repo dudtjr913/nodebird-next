@@ -1,20 +1,28 @@
-import React, { useCallback, useState, useRef } from 'react';
+import React, { useCallback, useState, useRef, useEffect } from 'react';
 import { Input, Form, Button } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { addRequestPost } from '../reducers/post';
+import { addPost } from '../reducers/post';
 
 const PostForm = () => {
 	const InputRef = useRef();
-	const { imagePaths, postLoding } = useSelector((state) => state.post);
+	const { imagePaths, postAddLoading } = useSelector((state) => state.post);
 	const dispatch = useDispatch();
+	const { postAddDone } = useSelector((state) => state.post);
 	const [text, setText] = useState('');
 	const onChangeText = useCallback((e) => {
 		setText(e.target.value);
 	}, []);
+
+	useEffect(() => {
+		if (postAddDone) {
+			setText('');
+		}
+	}, [postAddDone]);
+
 	const onSubmit = useCallback(() => {
-		dispatch(addRequestPost);
-		setText('');
-	}, []);
+		dispatch(addPost(text));
+	}, [text]);
+
 	const handleOnRef = useCallback(() => {
 		console.log(InputRef.current);
 		InputRef.current.click();
@@ -30,7 +38,7 @@ const PostForm = () => {
 			<input type="file" multiple hidden ref={InputRef} />
 			<Button onClick={handleOnRef}>이미지 업로드</Button>
 			<Button
-				loading={postLoding}
+				loading={postAddLoading}
 				type="primary"
 				htmlType="submit"
 				style={{ float: 'right' }}>
