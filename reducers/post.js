@@ -47,12 +47,15 @@ export const initialState = {
 		},
 	],
 	imagePaths: [],
-	postAdded: false,
+	postLoding: false,
 };
 
-const ADD_POST = 'ADD_POST';
-export const addPost = {
-	type: ADD_POST,
+export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
+export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
+export const ADD_POST_FAILURE = 'ADD_POST_FAILURE';
+
+export const addRequestPost = {
+	type: ADD_POST_REQUEST,
 };
 
 const dummyPost = {
@@ -68,11 +71,21 @@ const dummyPost = {
 
 const reducer = (state = initialState, action) => {
 	switch (action.type) {
-		case ADD_POST:
+		case ADD_POST_REQUEST:
+			return {
+				...state,
+				postLoding: true,
+			};
+		case ADD_POST_SUCCESS:
 			return {
 				...state,
 				mainPosts: [dummyPost, ...state.mainPosts],
-				postAdded: true,
+				postLoding: false,
+			};
+		case ADD_POST_FAILURE:
+			return {
+				...state,
+				postLoding: false,
 			};
 		default:
 			return state;

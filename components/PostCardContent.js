@@ -9,7 +9,7 @@ const PostCardContent = ({ postData }) => {
 					console.log(v);
 					return (
 						<Link key={i} href={`/hashtag/${v.slice(1)}`}>
-							{v}
+							<a>{v}</a>
 						</Link>
 					);
 				}

@@ -1,18 +1,18 @@
 import React, { useCallback, useState, useRef } from 'react';
 import { Input, Form, Button } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { addPost } from '../reducers/post';
+import { addRequestPost } from '../reducers/post';
 
 const PostForm = () => {
 	const InputRef = useRef();
-	const { imagePaths } = useSelector((state) => state.post);
+	const { imagePaths, postLoding } = useSelector((state) => state.post);
 	const dispatch = useDispatch();
 	const [text, setText] = useState('');
 	const onChangeText = useCallback((e) => {
 		setText(e.target.value);
 	}, []);
 	const onSubmit = useCallback(() => {
-		dispatch(addPost);
+		dispatch(addRequestPost);
 		setText('');
 	}, []);
 	const handleOnRef = useCallback(() => {
@@ -29,7 +29,11 @@ const PostForm = () => {
 			/>
 			<input type="file" multiple hidden ref={InputRef} />
 			<Button onClick={handleOnRef}>이미지 업로드</Button>
-			<Button type="primary" htmlType="submit" style={{ float: 'right' }}>
+			<Button
+				loading={postLoding}
+				type="primary"
+				htmlType="submit"
+				style={{ float: 'right' }}>
 				올리기
 			</Button>
 			<div>
