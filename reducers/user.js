@@ -1,6 +1,7 @@
 export const initialState = {
 	isLoggedIn: false,
 	isLoggingIn: false, //로그인 중
+	isLoggingOut: false, //로그아웃중
 	user: null,
 	signUpData: {},
 	loginData: {},
@@ -50,8 +51,21 @@ const reducer = (state = initialState, action) => {
 		case LOG_OUT_REQUEST:
 			return {
 				...state,
+				isLoggedIn: true,
+				isLoggingOut: true,
+			};
+		case LOG_OUT_SUCCESS:
+			return {
+				...state,
 				isLoggedIn: false,
+				isLoggingOut: false,
 				user: null,
+			};
+		case LOG_OUT_FAILURE:
+			return {
+				...state,
+				isLoggedIn: true,
+				isLoggingOut: false,
 			};
 		default:
 			return state;
