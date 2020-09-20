@@ -5,7 +5,7 @@ export const initialState = {
     {
       id: 1,
       User: {
-        email: 'yeongseok',
+        email: 'dudtjr913@naver.com',
         nickname: '영석',
       },
       content: '과연 될까? #노드버드 #성공',
@@ -58,11 +58,19 @@ export const initialState = {
   commentAddLoading: false,
   commentAddDone: false,
   commentAddError: false,
+
+  postRemoveLoading: false,
+  postRemoveDone: false,
+  postRemoveError: false,
 };
 
 export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
 export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
 export const ADD_POST_FAILURE = 'ADD_POST_FAILURE';
+
+export const REMOVE_POST_REQUEST = 'REMOVE_POST_REQUEST';
+export const REMOVE_POST_SUCCESS = 'REMOVE_POST_SUCCESS';
+export const REMOVE_POST_FAILURE = 'REMOVE_POST_FAILURE';
 
 export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
@@ -73,8 +81,8 @@ export const addPost = (data) => ({ type: ADD_POST_REQUEST, data });
 export const addComment = (data) => ({ type: ADD_COMMENT_REQUEST, data });
 
 const dummyPost = (data) => ({
-  id: shortId.generate(),
-  content: data.text,
+  id: data.id,
+  content: data.content,
   User: {
     email: data.email,
     nickname: data.nickname,
@@ -146,6 +154,28 @@ const reducer = (state = initialState, action) => {
         commentAddLoading: false,
         commentAddDone: false,
         commentAddError: action.error,
+      };
+    case REMOVE_POST_REQUEST:
+      return {
+        ...state,
+        postRemoveLoading: true,
+        postRemoveError: false,
+        postRemoveDone: false,
+      };
+    case REMOVE_POST_SUCCESS:
+      return {
+        ...state,
+        mainPosts: state.mainPosts.filter((v) => v.id !== action.data),
+        postRemoveLoading: false,
+        postRemoveDone: true,
+        postRemoveError: false,
+      };
+    case REMOVE_POST_FAILURE:
+      return {
+        ...state,
+        postRemoveLoading: false,
+        postRemoveDone: false,
+        postRemoveError: action.error,
       };
     default:
       return state;

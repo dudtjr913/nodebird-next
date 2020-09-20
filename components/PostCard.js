@@ -7,18 +7,20 @@ import {
   MessageOutlined,
   EllipsisOutlined,
 } from '@ant-design/icons';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import CommentForm from './CommentForm';
 import PostImages from './PostImages';
 import PostCardContent from './PostCardContent';
+import { REMOVE_POST_REQUEST } from '../reducers/post';
 
 const PostCard = ({ post }) => {
+  const dispatch = useDispatch();
   const [liked, setLiked] = useState(false);
   const [commented, setCommented] = useState(false);
   const { user, logInDone } = useSelector((state) => state.user);
-
+  const { postRemoveLoading } = useSelector((state) => state.post);
   const email = user?.email;
 
   useEffect(() => {
@@ -33,6 +35,14 @@ const PostCard = ({ post }) => {
     }
     setLiked((prev) => !prev);
   }, [logInDone]);
+
+  const handleOnPostRemove = useCallback(() => {
+    dispatch({
+      type: REMOVE_POST_REQUEST,
+      data: post.id,
+    });
+  }, []);
+
   const handleOnComment = useCallback(() => {
     setCommented((prev) => !prev);
   }, []);
@@ -55,7 +65,13 @@ const PostCard = ({ post }) => {
                 {email && email === post.User.email ? (
                   <>
                     <Button>수정</Button>
-                    <Button type="danger">삭제</Button>
+                    <Button
+                      type="danger"
+                      onClick={handleOnPostRemove}
+                      loading={postRemoveLoading}
+                    >
+                      삭제
+                    </Button>
                   </>
                 ) : (
                   <Button>신고</Button>
