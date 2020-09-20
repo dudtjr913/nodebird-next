@@ -1,3 +1,5 @@
+import produce from 'immer';
+
 export const initialState = {
   logInLoading: false,
   logInDone: false,
@@ -54,92 +56,80 @@ export const signUpAction = (data) => ({
   data,
 });
 
-const reducer = (state = initialState, action) => {
-  switch (action.type) {
-    case LOG_IN_REQUEST:
-      return {
-        ...state,
-        logInLoading: true,
-        logInError: false,
-      };
-    case LOG_IN_SUCCESS:
-      return {
-        ...state,
-        logInLoading: false,
-        logInDone: true,
-        logInError: false,
-        logOutDone: true,
-        user: dummyUser(action.data),
-      };
-    case LOG_IN_FAILURE:
-      return {
-        ...state,
-        user: null,
-        logInLoading: false,
-        logInDone: false,
-        logInError: action.error,
-      };
-    case LOG_OUT_REQUEST:
-      return {
-        ...state,
-        logOutLoading: true,
-        logOutError: false,
-      };
-    case LOG_OUT_SUCCESS:
-      return {
-        ...state,
-        logInDone: false,
-        logOutLoading: false,
-        logOutDone: true,
-        logOutError: false,
-        user: null,
-      };
-    case LOG_OUT_FAILURE:
-      return {
-        ...state,
-        logOutLoading: false,
-        logOutDone: false,
-        logOutError: action.error,
-      };
-    case SIGN_UP_REQUEST:
-      return {
-        ...state,
-        signUpLoading: true,
-        signUpError: false,
-      };
-    case SIGN_UP_SUCCESS:
-      return {
-        ...state,
-        signUpLoading: false,
-        signUpDone: true,
-        signUpError: false,
-      };
-    case SIGN_UP_FAILURE:
-      return {
-        ...state,
-        signUpLoading: false,
-        signUpDone: false,
-        signUpError: action.error,
-      };
-    case ADD_POST_TO_ME:
-      return {
-        ...state,
-        user: {
-          ...state.user,
-          Posts: [{ id: action.data }, ...state.user.Posts],
-        },
-      };
-    case REMOVE_POST_OF_ME:
-      return {
-        ...state,
-        user: {
-          ...state.user,
-          Posts: state.user.Posts.filter((v) => v.id !== action.data),
-        },
-      };
-    default:
-      return state;
-  }
-};
+const reducer = (state = initialState, action) =>
+  produce(state, (draft) => {
+    switch (action.type) {
+      case LOG_IN_REQUEST:
+        draft.logInLoading = true;
+        draft.logInError = false;
+        break;
+
+      case LOG_IN_SUCCESS:
+        draft.logInLoading = false;
+        draft.logInDone = true;
+        draft.logInError = false;
+        draft.logOutDone = true;
+        draft.user = dummyUser(action.data);
+        break;
+
+      case LOG_IN_FAILURE:
+        draft.user = null;
+        draft.logInLoading = false;
+        draft.logInDone = false;
+        draft.logInError = action.error;
+        break;
+
+      case LOG_OUT_REQUEST:
+        draft.logOutLoading = true;
+        draft.logOutError = false;
+        break;
+
+      case LOG_OUT_SUCCESS:
+        draft.logInDone = false;
+        draft.logOutLoading = false;
+        draft.logOutDone = true;
+        draft.logOutError = false;
+        draft.user = null;
+        break;
+
+      case LOG_OUT_FAILURE:
+        draft.logOutLoading = false;
+        draft.logOutDone = false;
+        draft.logOutError = action.error;
+        break;
+
+      case SIGN_UP_REQUEST:
+        draft.signUpLoading = true;
+        draft.signUpError = false;
+        break;
+
+      case SIGN_UP_SUCCESS:
+        draft.signUpLoading = false;
+        draft.signUpDone = true;
+        draft.signUpError = false;
+        break;
+
+      case SIGN_UP_FAILURE:
+        draft.signUpLoading = false;
+        draft.signUpDone = false;
+        draft.signUpError = action.error;
+        break;
+
+      case ADD_POST_TO_ME:
+        draft.user.Posts.unshift({ id: action.data });
+        break;
+
+      case REMOVE_POST_OF_ME: {
+        const removePost = draft.user.Posts.findIndex(
+          (v) => v.id === action.data,
+        );
+        draft.user.Posts.splice(removePost, 1);
+        break;
+      }
+
+      default:
+        break;
+    }
+  });
 
 export default reducer;
