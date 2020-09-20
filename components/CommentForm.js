@@ -5,63 +5,71 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addComment } from '../reducers/post';
 
 const CommentForm = ({ post }) => {
-	const [comment, setComment] = useState('');
-	const dispatch = useDispatch();
-	const onChangeText = useCallback((e) => {
-		setComment(e.target.value);
-	}, []);
-	const { commentAddDone } = useSelector((state) => state.post);
+  const [comment, setComment] = useState('');
+  const dispatch = useDispatch();
+  const onChangeText = useCallback((e) => {
+    setComment(e.target.value);
+  }, []);
+  const { commentAddDone } = useSelector((state) => state.post);
+  const { user } = useSelector((state) => state.user);
 
-	useEffect(() => {
-		setComment('');
-	}, [commentAddDone]);
+  useEffect(() => {
+    if (commentAddDone) {
+      setComment('');
+    }
+  }, [commentAddDone]);
 
-	const onCommentSubmit = useCallback(() => {
-		console.log(post, comment);
-		dispatch(
-			addComment({ content: comment, postId: post.id, userId: post.User.id }),
-		);
-	}, [comment, post.User.id]);
-	return (
-		<Form onFinish={onCommentSubmit}>
-			<Form.Item>
-				<Input.TextArea
-					rows={4}
-					style={{ marginTop: '5px' }}
-					maxLength={150}
-					onChange={onChangeText}
-					value={comment}
-					placeholder="댓글"
-				/>
-				<Button
-					style={{ float: 'right', marginTop: '5px' }}
-					type="primary"
-					htmlType="submit">
-					작성
-				</Button>
-			</Form.Item>
-		</Form>
-	);
+  const onCommentSubmit = useCallback(() => {
+    dispatch(
+      addComment({
+        text: comment,
+        postId: post.id,
+        nickname: user.nickname,
+        email: user.email,
+      }),
+    );
+  }, [comment, post.id, user.email, user.nickname]);
+  return (
+    <Form onFinish={onCommentSubmit}>
+      <Form.Item>
+        <Input.TextArea
+          rows={4}
+          style={{ marginTop: '5px' }}
+          maxLength={150}
+          onChange={onChangeText}
+          value={comment}
+          placeholder="댓글"
+        />
+        <Button
+          style={{ float: 'right', marginTop: '5px' }}
+          type="primary"
+          htmlType="submit"
+        >
+          작성
+        </Button>
+      </Form.Item>
+    </Form>
+  );
 };
 
 CommentForm.propTypes = {
-	post: PropTypes.shape({
-		id: PropTypes.number,
-		User: PropTypes.shape({
-			id: PropTypes.string,
-			nickname: PropTypes.string,
-		}),
-		content: PropTypes.string,
-		Images: PropTypes.arrayOf(PropTypes.object),
-		Comments: PropTypes.arrayOf(
-			PropTypes.shape({
-				User: PropTypes.shape({
-					nickname: PropTypes.string,
-				}),
-				content: PropTypes.string,
-			}),
-		),
-	}),
+  post: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    User: PropTypes.shape({
+      email: PropTypes.string,
+      nickname: PropTypes.string,
+    }),
+    content: PropTypes.string,
+    Images: PropTypes.arrayOf(PropTypes.object),
+    Comments: PropTypes.arrayOf(
+      PropTypes.shape({
+        User: PropTypes.shape({
+          nickname: PropTypes.string,
+        }),
+        content: PropTypes.string,
+      }),
+    ),
+  }).isRequired,
 };
 
 export default CommentForm;

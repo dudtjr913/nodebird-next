@@ -9,21 +9,21 @@ import PostForm from '../components/PostForm';
 import PostCard from '../components/PostCard';
 
 const Home = () => {
-	const { logInDone } = useSelector((state) => state.user);
-	const { mainPosts } = useSelector((state) => state.post);
-	return (
-		<>
-			<Head>
-				<title>메인화면 | NodeBird</title>
-			</Head>
-			<AppLayout>
-				{logInDone && <PostForm />}
-				{mainPosts.map((post, index) => (
-					<PostCard key={post.id} post={post} />
-				))}
-			</AppLayout>
-		</>
-	);
+  const { logInDone } = useSelector((state) => state.user);
+  const { mainPosts } = useSelector((state) => state.post);
+  return (
+    <>
+      <Head>
+        <title>메인화면 | NodeBird</title>
+      </Head>
+      <AppLayout>
+        {logInDone && <PostForm />}
+        {mainPosts.map((post) => (
+          <PostCard key={post.id} post={post} />
+        ))}
+      </AppLayout>
+    </>
+  );
 };
 
 export default Home;

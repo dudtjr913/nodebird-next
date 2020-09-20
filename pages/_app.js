@@ -2,22 +2,20 @@ import 'antd/dist/antd.css';
 import React from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
-import wrapper from '../store/configureStore';
 import withReduxSaga from 'next-redux-saga';
+import wrapper from '../store/configureStore';
 
-const NodeBird = ({ Component }) => {
-	return (
-		<>
-			<Head>
-				<meta charSet="utf-8" />
-			</Head>
-			<Component />
-		</>
-	);
-};
+const NodeBird = ({ Component }) => (
+  <>
+    <Head>
+      <meta charSet="utf-8" />
+    </Head>
+    <Component />
+  </>
+);
 
 NodeBird.propTypes = {
-	Component: PropTypes.elementType.isRequired,
+  Component: PropTypes.elementType.isRequired,
 };
 
 export default wrapper.withRedux(withReduxSaga(NodeBird));
