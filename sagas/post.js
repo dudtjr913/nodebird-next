@@ -13,9 +13,32 @@ import {
   ADD_COMMENT_REQUEST,
   ADD_COMMENT_SUCCESS,
   ADD_COMMENT_FAILURE,
+  LOAD_POST_REQUEST,
+  LOAD_POST_SUCCESS,
+  LOAD_POST_FAILURE,
 } from '../reducers/post';
 
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
+
+/* function loadPostsData(data) {
+  return axios.post('/api/loadPosts', data);
+  // 원래는 서버에 요청해야하지만 지금은 서버가 없으므로 사용하지 않음
+} */
+
+function* loadPosts() {
+  try {
+    // const result = yield call(loadPostsData(action.data))
+    yield delay(1000);
+    yield put({
+      type: LOAD_POST_SUCCESS,
+    });
+  } catch (err) {
+    yield put({
+      type: LOAD_POST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
 
 /* function addPostData(data) {
   return axios.post('/api/addpost', data);
@@ -24,7 +47,7 @@ import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
 
 function* addPost(action) {
   try {
-    // const result = yield call(logInData(action.data))
+    // const result = yield call(addPostData(action.data))
     const id = shortId.generate();
     yield delay(1000);
     yield put({
@@ -95,6 +118,10 @@ function* removePost(action) {
   }
 }
 
+function* watchLoadPost() {
+  yield takeLatest(LOAD_POST_REQUEST, loadPosts);
+}
+
 function* watchAddPost() {
   yield takeLatest(ADD_POST_REQUEST, addPost);
 }
@@ -108,5 +135,10 @@ function* watchAddComment() {
 }
 
 export default function* rootSaga() {
-  yield all([fork(watchAddPost), fork(watchAddComment), fork(watchRemovePost)]);
+  yield all([
+    fork(watchLoadPost),
+    fork(watchAddPost),
+    fork(watchAddComment),
+    fork(watchRemovePost),
+  ]);
 }
