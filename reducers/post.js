@@ -81,7 +81,7 @@ export const initialState = {
   commentAddError: false,
 };
 
-const infinitePosts = (number) =>
+export const infinitePosts = (number) =>
   Array(number)
     .fill()
     .map(() => ({
@@ -153,23 +153,23 @@ const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
       case LOAD_POST_REQUEST:
-        draft.postloadLoading = true;
-        draft.postloadDone = false;
-        draft.postloadError = false;
+        draft.postLoadLoading = true;
+        draft.postLoadDone = false;
+        draft.postLoadError = false;
         break;
 
       case LOAD_POST_SUCCESS:
-        draft.postloadLoading = false;
-        draft.postloadDone = true;
-        draft.postloadError = false;
-        draft.mainPosts = draft.mainPosts.concat(infinitePosts(10));
+        draft.postLoadLoading = false;
+        draft.postLoadDone = true;
+        draft.postLoadError = false;
+        draft.mainPosts = draft.mainPosts.concat(action.data);
         draft.hasPosts = draft.mainPosts.length < 50;
         break;
 
       case LOAD_POST_FAILURE:
-        draft.postloadLoading = false;
-        draft.postloadDone = false;
-        draft.postloadError = action.error;
+        draft.postLoadLoading = false;
+        draft.postLoadDone = false;
+        draft.postLoadError = action.error;
         break;
 
       case ADD_POST_REQUEST:

@@ -11,7 +11,9 @@ import { LOAD_POST_REQUEST } from '../reducers/post';
 
 const Home = () => {
   const { logInDone } = useSelector((state) => state.user);
-  const { mainPosts } = useSelector((state) => state.post);
+  const { mainPosts, postLoadLoading, hasPosts } = useSelector(
+    (state) => state.post,
+  );
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -19,6 +21,26 @@ const Home = () => {
       type: LOAD_POST_REQUEST,
     });
   }, []);
+
+  useEffect(() => {
+    const handleOnscroll = () => {
+      if (
+        window.scrollY + document.documentElement.clientHeight >
+        document.documentElement.scrollHeight - 400
+      ) {
+        if (hasPosts && !postLoadLoading) {
+          console.log('AA');
+          dispatch({
+            type: LOAD_POST_REQUEST,
+          });
+        }
+      }
+    };
+    window.addEventListener('scroll', handleOnscroll);
+    return () => {
+      window.removeEventListener('scroll', handleOnscroll);
+    };
+  }, [postLoadLoading]);
 
   return (
     <>

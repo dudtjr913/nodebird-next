@@ -1,4 +1,11 @@
-import { put, all, fork, delay, takeLatest } from 'redux-saga/effects';
+import {
+  put,
+  all,
+  fork,
+  delay,
+  takeLatest,
+  throttle,
+} from 'redux-saga/effects';
 // import axios from 'axios';
 
 import shortId from 'shortid';
@@ -16,6 +23,7 @@ import {
   LOAD_POST_REQUEST,
   LOAD_POST_SUCCESS,
   LOAD_POST_FAILURE,
+  infinitePosts,
 } from '../reducers/post';
 
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
@@ -31,6 +39,7 @@ function* loadPosts() {
     yield delay(1000);
     yield put({
       type: LOAD_POST_SUCCESS,
+      data: infinitePosts(10),
     });
   } catch (err) {
     yield put({
