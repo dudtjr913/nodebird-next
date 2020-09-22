@@ -4,33 +4,35 @@ import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { FOLLOW_REQUEST, UNFOLLOW_REQUEST } from '../reducers/user';
 
-const FollowButton = ({ nickname }) => {
+const FollowButton = ({ nickname, id }) => {
   const dispatch = useDispatch();
-  const { id } = useSelector((state) => state.post.mainPosts);
-  const { user, followLoading, unfollowLoading } = useSelector(
-    (state) => state.user,
-  );
+  const {
+    user,
+    followLoading,
+    unfollowLoading,
+    followingId,
+    unfollowingId,
+  } = useSelector((state) => state.user);
   const isFollowing = user.Followings.find((v) => v.nickname === nickname);
   const handleOnFollow = useCallback(() => {
     dispatch({
       type: FOLLOW_REQUEST,
-      data: { nickname },
+      data: { nickname, id },
     });
   }, [isFollowing]);
 
   const handleOnUnfollow = useCallback(() => {
     dispatch({
       type: UNFOLLOW_REQUEST,
-      data: { nickname },
+      data: { nickname, id },
     });
   }, [isFollowing]);
 
   return (
     <>
-      {console.log(id)}
       {isFollowing ? (
         <Button
-          loading={unfollowLoading}
+          loading={unfollowLoading && unfollowingId === id}
           onClick={handleOnUnfollow}
           style={{ float: 'right' }}
         >
@@ -38,7 +40,7 @@ const FollowButton = ({ nickname }) => {
         </Button>
       ) : (
         <Button
-          loading={followLoading}
+          loading={followLoading && followingId === id}
           onClick={handleOnFollow}
           style={{ float: 'right' }}
         >
@@ -51,6 +53,7 @@ const FollowButton = ({ nickname }) => {
 
 FollowButton.propTypes = {
   nickname: PropTypes.string.isRequired,
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 };
 
 export default FollowButton;

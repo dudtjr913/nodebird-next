@@ -24,6 +24,9 @@ export const initialState = {
   user: null,
   signUpData: {},
   loginData: {},
+
+  followingId: null,
+  unfollowingId: null,
 };
 
 const dummyUser = (data) => ({
@@ -150,6 +153,7 @@ const reducer = (state = initialState, action) =>
       case FOLLOW_REQUEST:
         draft.followLoading = true;
         draft.followError = false;
+        draft.followingId = action.data.id;
         break;
 
       case FOLLOW_SUCCESS:
@@ -168,6 +172,7 @@ const reducer = (state = initialState, action) =>
       case UNFOLLOW_REQUEST:
         draft.unfollowLoading = true;
         draft.unfollowError = false;
+        draft.unfollowingId = action.data.id;
         break;
 
       case UNFOLLOW_SUCCESS:

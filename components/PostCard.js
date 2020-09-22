@@ -77,7 +77,7 @@ const PostCard = ({ post }) => {
                     </Button>
                   </>
                 ) : (
-                  <Button>신고</Button>
+                  <Button danger>신고</Button>
                 )}
               </Button.Group>
             }
@@ -91,7 +91,9 @@ const PostCard = ({ post }) => {
           title={
             <div>
               <span>{post.User.nickname}</span>
-              {user && <FollowButton nickname={post.User.nickname} />}
+              {user && email !== post.User.email && (
+                <FollowButton nickname={post.User.nickname} id={post.id} />
+              )}
             </div>
           }
           description={<PostCardContent postData={post.content} />}
@@ -101,6 +103,7 @@ const PostCard = ({ post }) => {
         <div>
           {logInDone && <CommentForm post={post} />}
           <List
+            style={{ width: '90%', margin: 'auto' }}
             header={`${post.Comments.length}개의 댓글`}
             itemLayout="horizontal"
             dataSource={post.Comments}

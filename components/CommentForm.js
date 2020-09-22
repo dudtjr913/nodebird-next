@@ -30,7 +30,7 @@ const CommentForm = ({ post }) => {
     );
   }, [comment, post.id, user.email, user.nickname]);
   return (
-    <Form onFinish={onCommentSubmit}>
+    <Form onFinish={onCommentSubmit} style={{ width: '90%', margin: 'auto' }}>
       <Form.Item>
         <Input.TextArea
           rows={4}
