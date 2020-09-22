@@ -15,6 +15,7 @@ const PostImages = ({ images }) => {
     return (
       <>
         <img
+          style={{ maxHeight: '250px' }}
           src={images[0].src}
           alt={images[0].src}
           onClick={ZoomOpen}
@@ -28,14 +29,14 @@ const PostImages = ({ images }) => {
     return (
       <>
         <img
-          style={{ width: '50%', display: 'inline-block' }}
+          style={{ width: '50%', display: 'inline-block', maxHeight: '250px' }}
           src={images[0].src}
           alt={images[0].src}
           onClick={ZoomOpen}
           role="presentation"
         />
         <img
-          style={{ width: '50%', display: 'inline-block' }}
+          style={{ width: '50%', display: 'inline-block', maxHeight: '250px' }}
           src={images[1].src}
           alt={images[1].src}
           onClick={ZoomOpen}
@@ -51,7 +52,7 @@ const PostImages = ({ images }) => {
         onClick={ZoomOpen}
         role="presentation"
         src={images[0].src}
-        style={{ width: '50%', display: 'inline-block' }}
+        style={{ width: '50%', display: 'inline-block', maxHeight: '250px' }}
         alt={images[0].src}
       />
       <div
@@ -61,7 +62,7 @@ const PostImages = ({ images }) => {
           display: 'inline-block',
           width: '50%',
           textAlign: 'center',
-
+          maxHeight: '250px',
           verticalAlign: 'middle',
         }}
       >

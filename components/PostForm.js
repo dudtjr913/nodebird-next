@@ -30,7 +30,11 @@ const PostForm = () => {
     InputRef.current.click();
   }, []);
   return (
-    <Form encType="multipart/form-data" onFinish={onSubmit}>
+    <Form
+      style={{ width: '90%', margin: 'auto' }}
+      encType="multipart/form-data"
+      onFinish={onSubmit}
+    >
       <Input.TextArea
         value={text}
         onChange={onChangeText}

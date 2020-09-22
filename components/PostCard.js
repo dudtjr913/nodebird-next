@@ -14,6 +14,7 @@ import CommentForm from './CommentForm';
 import PostImages from './PostImages';
 import PostCardContent from './PostCardContent';
 import { REMOVE_POST_REQUEST } from '../reducers/post';
+import FollowButton from './FollowButton';
 
 const PostCard = ({ post }) => {
   const dispatch = useDispatch();
@@ -46,9 +47,11 @@ const PostCard = ({ post }) => {
   const handleOnComment = useCallback(() => {
     setCommented((prev) => !prev);
   }, []);
+
   return (
     <div>
       <Card
+        style={{ width: '90%', margin: 'auto' }}
         cover={post.Images[0] && <PostImages images={post.Images} />}
         actions={[
           <RetweetOutlined key="retweet" />,
@@ -85,7 +88,12 @@ const PostCard = ({ post }) => {
       >
         <Card.Meta
           avatar={<Avatar>{post.User.email[0].toUpperCase()}</Avatar>}
-          title={post.User.nickname}
+          title={
+            <div>
+              <span>{post.User.nickname}</span>
+              {user && <FollowButton nickname={post.User.nickname} />}
+            </div>
+          }
           description={<PostCardContent postData={post.content} />}
         />
       </Card>
