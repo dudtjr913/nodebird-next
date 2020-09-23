@@ -1,4 +1,6 @@
 /front/node_modules
+/back/config/config.json
+/back/node_modules
 
 .eslintrc
 .prettierrc.js
