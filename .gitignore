@@ -1,5 +1,5 @@
-/node_modules
+/front/node_modules
 
 .eslintrc
 .prettierrc.js
-/.next
+/front/.next

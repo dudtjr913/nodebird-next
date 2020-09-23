@@ -37,6 +37,9 @@ export const ButtonWrapper = styled(CloseOutlined)`
 export const SliderWrapper = styled.div`
   background-color: #090909;
   height: calc(100% - 50px);
+  display: flex;
+  flex-direction: column;
+  place-content: center;
 `;
 
 export const ImageWrapper = styled.div`
