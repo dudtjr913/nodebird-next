@@ -40,6 +40,7 @@ export const SliderWrapper = styled.div`
   display: flex;
   flex-direction: column;
   place-content: center;
+  user-select: none;
 `;
 
 export const ImageWrapper = styled.div`

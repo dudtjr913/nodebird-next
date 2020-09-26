@@ -10,7 +10,9 @@ const CommentForm = ({ post }) => {
   const onChangeText = useCallback((e) => {
     setComment(e.target.value);
   }, []);
-  const { commentAddDone } = useSelector((state) => state.post);
+  const { commentAddDone, commentAddLoading } = useSelector(
+    (state) => state.post,
+  );
   const { user } = useSelector((state) => state.user);
 
   useEffect(() => {
@@ -20,6 +22,9 @@ const CommentForm = ({ post }) => {
   }, [commentAddDone]);
 
   const onCommentSubmit = useCallback(() => {
+    if (!comment) {
+      return;
+    }
     dispatch(
       addComment({
         text: comment,
@@ -44,6 +49,7 @@ const CommentForm = ({ post }) => {
           style={{ float: 'right', marginTop: '5px' }}
           type="primary"
           htmlType="submit"
+          loading={commentAddLoading}
         >
           작성
         </Button>
