@@ -1,16 +1,19 @@
-const { sequelize } = require('.');
-
 module.exports = (sequelize, DataTypes) => {
   const Image = sequelize.define(
     'Image',
     {
-      src: {},
+      src: {
+        type: DataTypes.STRING(200),
+        allowNull: false,
+      },
     },
     {
-      charset: 'utf8', // 한글과 이모티콘
-      collate: 'utf8_general_ci', // 한글과 이모티콘 저장
+      charset: 'utf8', // 한글
+      collate: 'utf8_general_ci', // 한글 저장
     },
   );
-  Image.associate = (db) => {};
+  Image.associate = (db) => {
+    db.Image.belongsTo(db.post);
+  };
   return Image;
 };
