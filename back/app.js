@@ -10,7 +10,9 @@ server.listen(3065, () => console.log('서버 실행'));
 */
 const express = require('express');
 const postRouter = require('./routes/post');
+const userRouter = require('./routes/user');
 const db = require('./models');
+const cors = require('cors');
 
 const app = express();
 db.sequelize
@@ -19,6 +21,14 @@ db.sequelize
     console.log('연결 성공');
   })
   .catch(console.error);
+
+app.use(
+  cors({
+    origin: '*',
+  }),
+);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 /*  app.get -> 가져오다
    app.post -> 생성하다 
@@ -45,6 +55,7 @@ app.get('/posts', (req, res) => {
 });
 
 app.use('/post', postRouter);
+app.use('/user', userRouter);
 
 app.listen(3065, () => {
   console.log('서버 실행 중!');
