@@ -19,18 +19,16 @@ import {
   UNFOLLOW_FAILURE,
 } from '../reducers/user';
 
-/* function logInData(data) {
-  return axios.post('/api/login', data);
-  // 원래는 서버에 요청해야하지만 지금은 서버가 없으므로 사용하지 않음
-} */
+function logInData(data) {
+  return axios.post('user/login', data);
+}
 
 function* logIn(action) {
   try {
-    // const result = yield call(logInData(action.data))
-    yield delay(1000);
+    const result = yield call(logInData, action.data);
     yield put({
       type: LOG_IN_SUCCESS,
-      data: action.data,
+      data: result.data,
     });
   } catch (err) {
     yield put({
@@ -41,13 +39,13 @@ function* logIn(action) {
 }
 
 /* function logOutData(data) {
-  return axios.post('/api/logout', data);
+  return axios.post('/logout', data);
   // 원래는 서버에 요청해야하지만 지금은 서버가 없으므로 사용하지 않음
 } */
 
-function* logOut(/* action */) {
+function* logOut() {
   try {
-    // const result = yield call(logOutData(action.data))
+    // const result = yield call(logOutData,action.data)
     yield delay(1000);
     yield put({
       type: LOG_OUT_SUCCESS,
@@ -61,7 +59,7 @@ function* logOut(/* action */) {
 }
 
 function signUpData(data) {
-  return axios.post('http://localhost:3065/user', data);
+  return axios.post('/user', data);
 }
 
 function* signUp(action) {
@@ -80,13 +78,13 @@ function* signUp(action) {
 }
 
 /* function followData(data) {
-  return axios.post('/api/follow', data);
+  return axios.post('/follow', data);
   // 원래는 서버에 요청해야하지만 지금은 서버가 없으므로 사용하지 않음
 } */
 
 function* follow(action) {
   try {
-    // const result = yield call(followData(action.data))
+    // const result = yield call(followData,action.data)
     yield delay(1000);
     yield put({
       type: FOLLOW_SUCCESS,
@@ -101,13 +99,13 @@ function* follow(action) {
 }
 
 /* function unfollowData(data) {
-  return axios.post('/api/unfollow', data);
+  return axios.post('/unfollow', data);
   // 원래는 서버에 요청해야하지만 지금은 서버가 없으므로 사용하지 않음
 } */
 
 function* unfollow(action) {
   try {
-    // const result = yield call(unfollowData(action.data))
+    // const result = yield call(unfollowData,action.data)
     yield delay(1000);
     yield put({
       type: UNFOLLOW_SUCCESS,
