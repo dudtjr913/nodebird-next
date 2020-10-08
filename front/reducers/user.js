@@ -30,9 +30,8 @@ export const initialState = {
 };
 
 const dummyUser = (data) => ({
-  ...data,
-  nickname: '과연',
-  id: 1,
+  nickname: data.nickname,
+  id: data.id,
   Posts: [{ id: 1 }],
   Followings: [{ nickname: '슬기' }, { nickname: '영석' }],
   Followers: [{ nickname: '슬기' }, { nickname: '영석' }],

@@ -1,7 +1,7 @@
 const passport = require('passport');
-const { Strategy: LocalStrategy } = require('passport-local'); // Strategy -> LocalStrategy 구조분해 문법에서 이름을 바꾸는 것(굳이 안바꿔도 됨)
-const bcrypt = require('bcrypt');
+const { Strategy: LocalStrategy } = require('passport-local');
 const { User } = require('../models');
+const bcrypt = require('bcrypt');
 
 module.exports = () => {
   passport.use(
@@ -11,21 +11,24 @@ module.exports = () => {
         passwordField: 'password',
       },
       async (email, password, done) => {
+        console.log('LOCAL.JS');
         try {
           const user = await User.findOne({
             where: { email },
           });
           if (!user) {
-            return done(null, false, { reason: '존재하지 않는 이메일입니다!' });
+            return done(null, false, { reason: '아이디가 존재하지 않습니다.' });
           }
-          const result = await bcrypt.compare(password, user.password);
-          if (result) {
-            return done(null, user);
+          const pw = await bcrypt.compare(password, user.password);
+          if (!pw) {
+            return done(null, false, {
+              reason: '비밀번호가 일치하지 않습니다.',
+            });
           }
-          return done(null, false, { reason: '비밀번호가 틀렸습니다.' });
-        } catch (error) {
-          console.error(error);
-          return done(error);
+          return done(null, user);
+        } catch (err) {
+          console.error(err);
+          return done(err);
         }
       },
     ),
