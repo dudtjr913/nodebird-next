@@ -13,7 +13,6 @@ const CommentForm = ({ post }) => {
   const { commentAddDone, commentAddLoading } = useSelector(
     (state) => state.post,
   );
-  const { user } = useSelector((state) => state.user);
 
   useEffect(() => {
     if (commentAddDone) {
@@ -27,13 +26,11 @@ const CommentForm = ({ post }) => {
     }
     dispatch(
       addComment({
-        text: comment,
+        comment,
         postId: post.id,
-        nickname: user.nickname,
-        email: user.email,
       }),
     );
-  }, [comment, post.id, user.email, user.nickname]);
+  }, [comment, post.id]);
   return (
     <Form onFinish={onCommentSubmit} style={{ width: '90%', margin: 'auto' }}>
       <Form.Item>

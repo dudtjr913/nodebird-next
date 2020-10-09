@@ -8,7 +8,6 @@ const PostForm = () => {
   const { imagePaths, postAddLoading, postAddDone } = useSelector(
     (state) => state.post,
   );
-  const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [text, setText] = useState('');
   const onChangeText = useCallback((e) => {
@@ -22,8 +21,8 @@ const PostForm = () => {
   }, [postAddDone]);
 
   const onSubmit = useCallback(() => {
-    dispatch(addPost({ text, email: user.email, nickname: user.nickname }));
-  }, [text, user.email, user.nickname]);
+    dispatch(addPost({ content: text }));
+  }, [text]);
 
   const handleOnRef = useCallback(() => {
     console.log(InputRef.current);

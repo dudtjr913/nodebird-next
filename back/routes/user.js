@@ -22,6 +22,7 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
           return next(err);
         }
         const fullUserInfWithoutPassword = await User.findOne({
+          where: { id: user.id },
           attributes: ['id', 'email', 'nickname'],
           include: [
             {

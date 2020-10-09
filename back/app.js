@@ -25,13 +25,13 @@ dotenv.config();
 
 app.use(
   cors({
-    origin: '*',
+    origin: 'http://localhost:3060',
+    credentials: true,
   }),
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(
   session({
     saveUninitialized: false,
@@ -39,7 +39,8 @@ app.use(
     secret: process.env.COOKIE_SECRET,
   }),
 );
-app.use(cookieParser());
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get('/', (req, res) => {
   res.send('hello express');
