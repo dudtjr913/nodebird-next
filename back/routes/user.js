@@ -1,11 +1,12 @@
 const express = require('express');
-const { User } = require('../models');
+const { User, Post } = require('../models');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
+const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 
 const router = express.Router();
 
-router.post('/login', (req, res, next) => {
+router.post('/login', isNotLoggedIn, (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
     if (err) {
       console.error(err);
@@ -15,27 +16,60 @@ router.post('/login', (req, res, next) => {
       console.error(info);
       return res.status(401).send(info.reason);
     }
-    if (!user) {
-      return res.status(401).send('로그인에 실패하였습니다.');
-    }
-    req.logIn(user, (err) => {
-      if (err) {
-        return next(err);
+    req.logIn(user, async (err) => {
+      try {
+        if (err) {
+          return next(err);
+        }
+        const fullUserInfWithoutPassword = await User.findOne({
+          attributes: ['id', 'email', 'nickname'],
+          include: [
+            {
+              model: Post,
+            },
+            {
+              model: User,
+              as: 'Followings',
+            },
+            {
+              model: User,
+              as: 'Followers',
+            },
+          ],
+        });
+        console.log(user.id);
+        return res.status(201).json(fullUserInfWithoutPassword);
+      } catch (err) {
+        console.error(err);
+        next(err);
       }
-      return res.status(201).json(user);
     });
   })(req, res, next);
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/logout', isLoggedIn, (req, res) => {
+  req.logout();
+  req.session.destroy();
+  res.send('ok');
+});
+
+router.post('/', isNotLoggedIn, async (req, res, next) => {
   try {
-    const exUser = await User.findOne({
+    const exEmail = await User.findOne({
       where: {
         email: req.body.email,
       },
     });
-    if (exUser) {
+    if (exEmail) {
       return res.status(403).send('이미 동일한 이메일이 존재합니다.');
+    }
+    const exNickname = await User.findOne({
+      where: {
+        nickname: req.body.nickname,
+      },
+    });
+    if (exNickname) {
+      return res.status(403).send('이미 동일한 닉네임이 존재합니다.');
     }
     const hashPassword = await bcrypt.hash(req.body.password, 10);
     await User.create({

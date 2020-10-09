@@ -12,7 +12,9 @@ const SignUp = () => {
   const [password, onChangePassword] = UseInput('');
   const [nickname, onChangeNickname] = UseInput('');
 
-  const { signUpLoading, signUpDone } = useSelector((state) => state.user);
+  const { signUpLoading, signUpDone, signUpError } = useSelector(
+    (state) => state.user,
+  );
 
   const dispatch = useDispatch();
 
@@ -21,9 +23,15 @@ const SignUp = () => {
 
   useEffect(() => {
     if (signUpDone) {
-      Router.push('/');
+      Router.replace('/');
     }
   }, [signUpDone]);
+
+  useEffect(() => {
+    if (signUpError) {
+      alert(signUpError);
+    }
+  }, [signUpError]);
 
   const onChangePasswordCheck = useCallback(
     (e) => {

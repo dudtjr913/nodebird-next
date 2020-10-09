@@ -113,7 +113,7 @@ const PostCard = ({ post }) => {
                   actions={[<span key="reply-comment">답장</span>]}
                   author={comments.User.email}
                   avatar={
-                    <Avatar>{comments.User.email[0].toUpperCase()}</Avatar>
+                    <Avatar>{comments.User.nickname[0].toUpperCase()}</Avatar>
                   }
                   content={comments.content}
                   datetime={

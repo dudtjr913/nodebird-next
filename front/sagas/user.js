@@ -38,15 +38,13 @@ function* logIn(action) {
   }
 }
 
-/* function logOutData(data) {
-  return axios.post('/logout', data);
-  // 원래는 서버에 요청해야하지만 지금은 서버가 없으므로 사용하지 않음
-} */
+function logOutData() {
+  return axios.post('/user/logout');
+}
 
 function* logOut() {
   try {
-    // const result = yield call(logOutData,action.data)
-    yield delay(1000);
+    yield call(logOutData);
     yield put({
       type: LOG_OUT_SUCCESS,
     });

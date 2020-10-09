@@ -29,7 +29,10 @@ const UserProfile = () => {
         </div>,
       ]}
     >
-      <Card.Meta avatar={<Avatar>ZC</Avatar>} title="Yeong" />
+      <Card.Meta
+        avatar={<Avatar>{user.nickname[0].toUpperCase()}</Avatar>}
+        title={user.nickname}
+      />
       <Button loading={logOutLoading} onClick={LogOutForm}>
         로그아웃
       </Button>

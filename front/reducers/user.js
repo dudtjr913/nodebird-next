@@ -29,14 +29,6 @@ export const initialState = {
   unfollowingId: null,
 };
 
-const dummyUser = (data) => ({
-  nickname: data.nickname,
-  id: data.id,
-  Posts: [{ id: 1 }],
-  Followings: [{ nickname: '슬기' }, { nickname: '영석' }],
-  Followers: [{ nickname: '슬기' }, { nickname: '영석' }],
-});
-
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
 export const LOG_IN_FAILURE = 'LOG_IN_FAILURE';
@@ -87,7 +79,7 @@ const reducer = (state = initialState, action) =>
         draft.logInDone = true;
         draft.logInError = false;
         draft.logOutDone = true;
-        draft.user = dummyUser(action.data);
+        draft.user = action.data;
         break;
 
       case LOG_IN_FAILURE:
@@ -108,6 +100,7 @@ const reducer = (state = initialState, action) =>
         draft.logOutDone = true;
         draft.logOutError = false;
         draft.user = null;
+        draft.signUpDone = false;
         break;
 
       case LOG_OUT_FAILURE:
@@ -118,6 +111,7 @@ const reducer = (state = initialState, action) =>
 
       case SIGN_UP_REQUEST:
         draft.signUpLoading = true;
+        draft.signUpDone = false;
         draft.signUpError = false;
         break;
 

@@ -8,6 +8,7 @@ const app = express();
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passportConfig = require('./passport');
+const dotenv = require('dotenv');
 
 db.sequelize
   .sync()
@@ -20,6 +21,8 @@ db.sequelize
   });
 
 passportConfig();
+dotenv.config();
+
 app.use(
   cors({
     origin: '*',
@@ -31,7 +34,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(
   session({
-    secret: 'nodebird',
+    saveUninitialized: false,
+    resave: false,
+    secret: process.env.COOKIE_SECRET,
   }),
 );
 app.use(cookieParser());
