@@ -9,6 +9,7 @@ import PostForm from '../components/PostForm';
 import PostCard from '../components/PostCard';
 import { LOAD_POST_REQUEST } from '../reducers/post';
 import ScreenUp from '../components/ScreenUp';
+import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
 
 const Home = () => {
   const { logInDone } = useSelector((state) => state.user);
@@ -16,6 +17,12 @@ const Home = () => {
     (state) => state.post,
   );
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch({
+      type: LOAD_MY_INFO_REQUEST,
+    });
+  }, []);
 
   useEffect(() => {
     dispatch({

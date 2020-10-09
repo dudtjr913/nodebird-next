@@ -85,4 +85,34 @@ router.post('/', isNotLoggedIn, async (req, res, next) => {
   }
 });
 
+router.get('/', async (req, res, next) => {
+  try {
+    if (req.user) {
+      const user = await User.findOne({
+        where: { id: req.user.id },
+        attributes: ['email', 'nickname', 'id'],
+        include: [
+          {
+            model: User,
+            as: 'Followings',
+          },
+          {
+            model: User,
+            as: 'Followers',
+          },
+          {
+            model: Post,
+          },
+        ],
+      });
+      res.status(200).json(user);
+    } else {
+      res.status(200).send(null);
+    }
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
 module.exports = router;

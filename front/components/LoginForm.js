@@ -34,7 +34,6 @@ const LoginForm = () => {
   }, []);
 
   const onSubmitForm = useCallback(() => {
-    console.log(email, password);
     dispatch(loginAction({ email, password }));
   }, [email, password]);
 
