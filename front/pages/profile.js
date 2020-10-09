@@ -7,7 +7,7 @@ import NicknameEditForm from '../components/NicknameEditForm';
 import FollowList from '../components/FollowList';
 
 const Profile = () => {
-  const { user, logInDone } = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.user);
 
   return (
     <>
@@ -15,7 +15,7 @@ const Profile = () => {
         <title>프로필</title>
       </Head>
 
-      {logInDone ? (
+      {user ? (
         <AppLayout>
           <NicknameEditForm />
           <FollowList data={user.Followings} header="팔로잉" />

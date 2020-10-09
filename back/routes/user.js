@@ -27,14 +27,17 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
           include: [
             {
               model: Post,
+              attributes: ['id'],
             },
             {
               model: User,
               as: 'Followings',
+              attributes: ['id', 'nickname'],
             },
             {
               model: User,
               as: 'Followers',
+              attributes: ['id', 'nickname'],
             },
           ],
         });
@@ -95,19 +98,22 @@ router.get('/', async (req, res, next) => {
           {
             model: User,
             as: 'Followings',
+            attributes: ['id', 'nickname'],
           },
           {
             model: User,
             as: 'Followers',
+            attributes: ['id', 'nickname'],
           },
           {
             model: Post,
+            attributes: ['id'],
           },
         ],
       });
       res.status(200).json(user);
     } else {
-      res.status(200).send(null);
+      res.status(200).json(null);
     }
   } catch (err) {
     console.error(err);

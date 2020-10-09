@@ -12,7 +12,7 @@ import ScreenUp from '../components/ScreenUp';
 import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
 
 const Home = () => {
-  const { logInDone } = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.user);
   const { mainPosts, postLoadLoading, hasPosts } = useSelector(
     (state) => state.post,
   );
@@ -56,7 +56,7 @@ const Home = () => {
         <title>메인화면 | NodeBird</title>
       </Head>
       <AppLayout>
-        {logInDone && <PostForm />}
+        {user && <PostForm />}
         {mainPosts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}

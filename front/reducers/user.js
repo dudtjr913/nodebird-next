@@ -192,14 +192,12 @@ const reducer = (state = initialState, action) =>
       case LOAD_MY_INFO_REQUEST:
         draft.loadMyInfoLoading = true;
         draft.loadMyInfoDone = false;
-        draft.logInDone = false;
         draft.loadMyInfoError = false;
         break;
 
       case LOAD_MY_INFO_SUCCESS:
         draft.loadMyInfoLoading = false;
         draft.loadMyInfoDone = true;
-        draft.logInDone = true;
         draft.loadMyInfoError = false;
         draft.user = action.data;
         break;
@@ -207,7 +205,6 @@ const reducer = (state = initialState, action) =>
       case LOAD_MY_INFO_FAILURE:
         draft.loadMyInfoLoading = false;
         draft.loadMyInfoDone = false;
-        draft.logInDone = false;
         draft.loadMyInfoError = action.error;
         break;
 

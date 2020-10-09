@@ -20,22 +20,22 @@ const PostCard = ({ post }) => {
   const dispatch = useDispatch();
   const [liked, setLiked] = useState(false);
   const [commented, setCommented] = useState(false);
-  const { user, logInDone } = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.user);
   const { postRemoveLoading } = useSelector((state) => state.post);
   const email = user?.email;
 
   useEffect(() => {
-    if (!logInDone) {
+    if (!user) {
       setLiked(false);
     }
-  }, [logInDone]);
+  }, [user]);
 
   const handleOnLike = useCallback(() => {
-    if (!logInDone) {
+    if (!user) {
       return;
     }
     setLiked((prev) => !prev);
-  }, [logInDone]);
+  }, [user]);
 
   const handleOnPostRemove = useCallback(() => {
     dispatch({
@@ -101,7 +101,7 @@ const PostCard = ({ post }) => {
       </Card>
       {commented && (
         <div>
-          {logInDone && <CommentForm post={post} />}
+          {user && <CommentForm post={post} />}
           <List
             style={{ width: '90%', margin: 'auto' }}
             header={`${post.Comments.length}개의 댓글`}
