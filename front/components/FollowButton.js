@@ -4,27 +4,28 @@ import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { FOLLOW_REQUEST, UNFOLLOW_REQUEST } from '../reducers/user';
 
-const FollowButton = ({ nickname, id }) => {
+const FollowButton = ({ postId, userId }) => {
   const dispatch = useDispatch();
   const {
     user,
     followLoading,
     unfollowLoading,
-    followingId,
-    unfollowingId,
+    followingPostId,
+    unfollowingPostId,
   } = useSelector((state) => state.user);
-  const isFollowing = user.Followings.find((v) => v.id === id);
+  const isFollowing = user.Followings.find((v) => v.id === userId);
+
   const handleOnFollow = useCallback(() => {
     dispatch({
       type: FOLLOW_REQUEST,
-      data: { nickname, id },
+      data: { postId, userId },
     });
   }, [isFollowing]);
 
   const handleOnUnfollow = useCallback(() => {
     dispatch({
       type: UNFOLLOW_REQUEST,
-      data: { nickname, id },
+      data: { postId, userId },
     });
   }, [isFollowing]);
 
@@ -32,7 +33,7 @@ const FollowButton = ({ nickname, id }) => {
     <>
       {isFollowing ? (
         <Button
-          loading={unfollowLoading && unfollowingId === id}
+          loading={unfollowLoading && unfollowingPostId === postId}
           onClick={handleOnUnfollow}
           style={{ float: 'right' }}
         >
@@ -40,7 +41,7 @@ const FollowButton = ({ nickname, id }) => {
         </Button>
       ) : (
         <Button
-          loading={followLoading && followingId === id}
+          loading={followLoading && followingPostId === postId}
           onClick={handleOnFollow}
           style={{ float: 'right' }}
         >
@@ -52,8 +53,8 @@ const FollowButton = ({ nickname, id }) => {
 };
 
 FollowButton.propTypes = {
-  nickname: PropTypes.string.isRequired,
-  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  postId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  userId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 };
 
 export default FollowButton;

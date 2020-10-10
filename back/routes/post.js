@@ -70,7 +70,7 @@ router.patch('/:postId/like', isLoggedIn, async (req, res, next) => {
       },
     });
     if (!post) {
-      res.status(403).send('게시글이 존재하지 않습니다.');
+      return res.status(403).send('게시글이 존재하지 않습니다.');
     }
     await post.addLikers(req.user.id);
     res.status(200).json({ PostId: post.id, UserId: post.UserId });
@@ -88,10 +88,25 @@ router.delete('/:postId/unlike', isLoggedIn, async (req, res, next) => {
       },
     });
     if (!post) {
-      res.status(403).send('게시글이 존재하지 않습니다.');
+      return res.status(403).send('게시글이 존재하지 않습니다.');
     }
     await post.removeLikers(req.user.id);
     res.status(200).json({ PostId: post.id, UserId: post.UserId });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+router.delete('/:postId', isLoggedIn, async (req, res, next) => {
+  try {
+    await Post.destroy({
+      where: {
+        id: req.params.postId,
+        UserId: req.user.id,
+      },
+    });
+    res.status(200).send(req.params.postId);
   } catch (err) {
     console.error(err);
     next(err);

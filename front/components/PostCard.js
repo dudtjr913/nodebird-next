@@ -35,7 +35,7 @@ const PostCard = ({ post }) => {
       type: ADD_LIKE_REQUEST,
       data: post.id,
     });
-  }, []);
+  }, [user]);
 
   const onRemoveLike = useCallback(() => {
     dispatch({
@@ -101,7 +101,7 @@ const PostCard = ({ post }) => {
             <div>
               <span>{post.User.nickname}</span>
               {user && email !== post.User.email && (
-                <FollowButton nickname={post.User.nickname} id={post.User.id} />
+                <FollowButton postId={post.id} userId={post.User.id} />
               )}
             </div>
           }
