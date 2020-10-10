@@ -216,7 +216,9 @@ router.get('/followers', isLoggedIn, async (req, res, next) => {
     if (!user) {
       return res.status(403).send('로그인이 필요합니다.');
     }
-    const followers = await user.getFollowers();
+    const followers = await user.getFollowers({
+      attributes: ['id', 'nickname'],
+    });
     res.status(200).json(followers);
   } catch (err) {
     console.error(err);

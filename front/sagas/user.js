@@ -152,10 +152,12 @@ function loadMyFollowingsData() {
 function* loadMyFollowings() {
   try {
     const result = yield call(loadMyFollowingsData);
-    console.log(result.data.Followings);
     yield put({
       type: LOAD_MY_FOLLOWINGS_SUCCESS,
-      data: result.data,
+      data: result.data.map((v) => ({
+        id: v.id,
+        nickname: v.nickname,
+      })), // 임시방편으로 해두었음 나중에 get method에서 through데이터를 제거할 방법을 찾으면 고쳐야 함
     });
   } catch (err) {
     yield put({
@@ -174,7 +176,10 @@ function* loadMyFollowers() {
     const result = yield call(loadMyFollowersData);
     yield put({
       type: LOAD_MY_FOLLOWERS_SUCCESS,
-      data: result.data,
+      data: result.data.map((v) => ({
+        id: v.id,
+        nickname: v.nickname,
+      })), // 임시방편으로 해두었음 나중에 get method에서 through데이터를 제거할 방법을 찾으면 고쳐야 함
     });
   } catch (err) {
     yield put({

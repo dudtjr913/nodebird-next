@@ -16,16 +16,15 @@ const Profile = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   useEffect(() => {
-    if (!user) {
-      Router.replace('/');
-    }
-  }, [user]);
-
-  useEffect(() => {
     dispatch({
       type: LOAD_MY_INFO_REQUEST,
     });
   }, []);
+  useEffect(() => {
+    if (!user) {
+      Router.replace('/');
+    }
+  }, [user]);
 
   useEffect(() => {
     dispatch({
