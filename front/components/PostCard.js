@@ -13,7 +13,11 @@ import moment from 'moment';
 import CommentForm from './CommentForm';
 import PostImages from './PostImages';
 import PostCardContent from './PostCardContent';
-import { REMOVE_POST_REQUEST, ADD_LIKE_REQUEST, REMOVE_LIKE_REQUEST } from '../reducers/post';
+import {
+  REMOVE_POST_REQUEST,
+  ADD_LIKE_REQUEST,
+  REMOVE_LIKE_REQUEST,
+} from '../reducers/post';
 import FollowButton from './FollowButton';
 
 const PostCard = ({ post }) => {
@@ -24,6 +28,9 @@ const PostCard = ({ post }) => {
   const email = user?.email;
 
   const onLike = useCallback(() => {
+    if (!user) {
+      return;
+    }
     dispatch({
       type: ADD_LIKE_REQUEST,
       data: post.id,
@@ -48,7 +55,7 @@ const PostCard = ({ post }) => {
     setCommented((prev) => !prev);
   }, []);
 
-  const like = post.Likers.find((v) => v.id === post.User.id);
+  const like = user && post.Likers.find((v) => v.id === post.User.id);
 
   return (
     <div>
@@ -152,6 +159,11 @@ PostCard.propTypes = {
         }),
         content: PropTypes.string,
       }),
+    ),
+    Likers: PropTypes.arrayOf(
+      PropTypes.objectOf(
+        PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      ),
     ),
   }).isRequired,
 };

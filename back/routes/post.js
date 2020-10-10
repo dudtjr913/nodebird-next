@@ -21,8 +21,13 @@ router.post('/', isLoggedIn, async (req, res, next) => {
           model: Image,
         },
         {
-          model: User,
-          attributes: ['id','email', 'nickname'],
+          model: User, // 게시글 작성자
+          attributes: ['id', 'email', 'nickname'],
+        },
+
+        {
+          model: User, // 좋아요를 표시한 사람
+          as: 'Likers',
         },
       ],
     });
@@ -45,8 +50,8 @@ router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
       attributes: ['id', 'content', 'PostId'],
       include: [
         {
-          model: User,
-          attributes: ['id','email', 'nickname'],
+          model: User, // 댓글 작성자
+          attributes: ['id', 'email', 'nickname'],
         },
       ],
     });
@@ -57,23 +62,40 @@ router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
   }
 });
 
- router.patch('/:postId/like', async (req,res,next) => {
-  try{
+router.patch('/:postId/like', isLoggedIn, async (req, res, next) => {
+  try {
     const post = await Post.findOne({
-      where : {
-        id : req.params.postId
-      }
-    })
-    post.addLikers({UserId : req.user.id});
-    res.status(200).json(post);
-  }catch(err){
+      where: {
+        id: req.params.postId,
+      },
+    });
+    if (!post) {
+      res.status(403).send('게시글이 존재하지 않습니다.');
+    }
+    await post.addLikers(req.user.id);
+    res.status(200).json({ PostId: post.id, UserId: post.UserId });
+  } catch (err) {
     console.error(err);
     next(err);
   }
-})
+});
 
-router.delete('/', (req, res) => {
-  res.json({ id: 1 });
+router.delete('/:postId/unlike', isLoggedIn, async (req, res, next) => {
+  try {
+    const post = await Post.findOne({
+      where: {
+        id: req.params.postId,
+      },
+    });
+    if (!post) {
+      res.status(403).send('게시글이 존재하지 않습니다.');
+    }
+    await post.removeLikers(req.user.id);
+    res.status(200).json({ PostId: post.id, UserId: post.UserId });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
 });
 
 module.exports = router;

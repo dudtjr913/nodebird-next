@@ -28,7 +28,8 @@ export const initialState = {
 
   removeLikeLoading: false, // 좋아요 삭제
   removeLikeDone: false,
-  removeLikeError: false };
+  removeLikeError: false,
+};
 
 export const ADD_LIKE_REQUEST = 'ADD_LIKE_REQUEST';
 export const ADD_LIKE_SUCCESS = 'ADD_LIKE_SUCCESS';
@@ -69,11 +70,12 @@ const reducer = (state = initialState, action) =>
 
       case ADD_LIKE_SUCCESS: {
         const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
-        post.Likers.push(action.data.UserId);
+        post.Likers.push({ id: action.data.UserId });
         draft.addLikeLoading = false;
         draft.addLikeDone = true;
         draft.addLikeError = false;
-        break; }
+        break;
+      }
 
       case ADD_LIKE_FAILURE:
         draft.addLikeLoading = false;
@@ -87,11 +89,17 @@ const reducer = (state = initialState, action) =>
         draft.removeLikeError = false;
         break;
 
-      case REMOVE_LIKE_SUCCESS:
+      case REMOVE_LIKE_SUCCESS: {
+        const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
+        const unlikeIndex = post.Likers.findIndex(
+          (v) => v.id === action.data.UserId,
+        );
+        post.Likers.splice(unlikeIndex, 1);
         draft.removeLikeLoading = false;
         draft.removeLikeDone = true;
         draft.removeLikeError = false;
         break;
+      }
 
       case REMOVE_LIKE_FAILURE:
         draft.removeLikeLoading = false;

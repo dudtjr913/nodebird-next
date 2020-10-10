@@ -51,6 +51,7 @@ function addPostData(data) {
 function* addPost(action) {
   try {
     const result = yield call(addPostData, action.data);
+    console.log(result);
     yield put({
       type: ADD_POST_SUCCESS,
       data: result.data,
@@ -88,18 +89,18 @@ function* addComment(action) {
 }
 
 function addLikeData(data) {
-  return axios.patch(`/post/${data}/like`, data);
+  return axios.patch(`/post/${data}/like`);
 }
 
 function* addLike(action) {
   try {
     const result = yield call(addLikeData, action.data);
-    console.log(result);
     yield put({
       type: ADD_LIKE_SUCCESS,
       data: result.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: ADD_LIKE_FAILURE,
       error: err.response.data,
@@ -108,13 +109,12 @@ function* addLike(action) {
 }
 
 function removeLikeData(data) {
-  return axios.delete(`/post/${data}/unlike`, data);
+  return axios.delete(`/post/${data}/unlike`);
 }
 
 function* removeLike(action) {
   try {
     const result = yield call(removeLikeData, action.data);
-    console.log(result);
     yield put({
       type: REMOVE_LIKE_SUCCESS,
       data: result.data,
