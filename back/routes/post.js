@@ -22,7 +22,7 @@ router.post('/', isLoggedIn, async (req, res, next) => {
         },
         {
           model: User,
-          attributes: ['email', 'nickname'],
+          attributes: ['id','email', 'nickname'],
         },
       ],
     });
@@ -46,7 +46,7 @@ router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
       include: [
         {
           model: User,
-          attributes: ['email', 'nickname'],
+          attributes: ['id','email', 'nickname'],
         },
       ],
     });

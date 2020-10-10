@@ -98,12 +98,12 @@ router.get('/', async (req, res, next) => {
           {
             model: User,
             as: 'Followings',
-            attributes: ['id', 'nickname'],
+            attributes: ['id','email', 'nickname'],
           },
           {
             model: User,
             as: 'Followers',
-            attributes: ['id', 'nickname'],
+            attributes: ['id','email', 'nickname'],
           },
           {
             model: Post,

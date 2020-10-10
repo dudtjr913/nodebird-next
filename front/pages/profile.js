@@ -1,13 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Head from 'next/head';
 
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import AppLayout from '../components/AppLayout';
 import NicknameEditForm from '../components/NicknameEditForm';
 import FollowList from '../components/FollowList';
+import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
 
 const Profile = () => {
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
+  useEffect(() => {
+    dispatch({
+      type: LOAD_MY_INFO_REQUEST,
+    });
+  }, []);
 
   return (
     <>

@@ -92,7 +92,7 @@ const PostCard = ({ post }) => {
             <div>
               <span>{post.User.nickname}</span>
               {user && email !== post.User.email && (
-                <FollowButton nickname={post.User.nickname} id={post.id} />
+                <FollowButton nickname={post.User.nickname} id={post.User.id} />
               )}
             </div>
           }
@@ -139,6 +139,7 @@ PostCard.propTypes = {
     User: PropTypes.shape({
       email: PropTypes.string,
       nickname: PropTypes.string,
+      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     }),
     content: PropTypes.string,
     Images: PropTypes.arrayOf(PropTypes.object),

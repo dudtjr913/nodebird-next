@@ -13,7 +13,7 @@ const FollowButton = ({ nickname, id }) => {
     followingId,
     unfollowingId,
   } = useSelector((state) => state.user);
-  const isFollowing = user.Followings.find((v) => v.nickname === nickname);
+  const isFollowing = user.Followings.find((v) => v.id === id);
   const handleOnFollow = useCallback(() => {
     dispatch({
       type: FOLLOW_REQUEST,
