@@ -1,65 +1,7 @@
-import shortId from 'shortid';
 import produce from 'immer';
-import faker from 'faker';
 
 export const initialState = {
-  mainPosts: [
-    {
-      id: 1,
-      User: {
-        email: 'dudtjr913@naver.com',
-        nickname: '영석',
-      },
-      content: '과연 될까? #노드버드 #성공',
-      Images: [
-        {
-          id: 11,
-          src: 'https://velopert.com/wp-content/uploads/2016/03/react.png',
-        },
-        {
-          id: 12,
-          src:
-            'https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?udate=20180726',
-        },
-        {
-          id: 13,
-          src: 'https://gimg.gilbut.co.kr/book/BN001958/rn_view_BN001958.jpg',
-        },
-        {
-          id: 14,
-          src: 'https://gimg.gilbut.co.kr/book/BN001998/rn_view_BN001998.jpg',
-        },
-        {
-          id: 15,
-          src:
-            'https://blog.kakaocdn.net/dn/PAkOZ/btqxwEMvpqH/iBiyldE1hv8avELugFhgYk/img.jpg',
-        },
-        {
-          id: 16,
-          src:
-            'https://media.vlpt.us/images/mtmin/post/1a9ed69e-db6c-41f3-8763-dd0f723ad1a5/react-redux.png',
-        },
-      ],
-      Comments: [
-        {
-          id: 2,
-          User: {
-            email: 'dudtjr913@naver.com',
-            nickname: 'Yeong',
-          },
-          content: '댓글댓글',
-        },
-        {
-          id: 3,
-          User: {
-            email: 'hybam@naver.com',
-            nickname: 'Cheon',
-          },
-          content: '과연과연',
-        },
-      ],
-    },
-  ],
+  mainPosts: [],
   imagePaths: [],
 
   hasPosts: true, // 포스트 로딩을 위한 포스트 데이터를 가지고 있는지에 대한 여부(너무 많으면 컷하기 위함)
@@ -79,35 +21,22 @@ export const initialState = {
   commentAddLoading: false, // 댓글 추가
   commentAddDone: false,
   commentAddError: false,
-};
 
-export const infinitePosts = (number) =>
-  Array(number)
-    .fill()
-    .map(() => ({
-      id: shortId.generate(),
-      User: {
-        email: faker.internet.email(),
-        nickname: faker.name.findName(),
-      },
-      content: faker.lorem.sentence(),
-      Images: [
-        {
-          id: shortId.generate(),
-          src: faker.image.image(),
-        },
-      ],
-      Comments: [
-        {
-          id: shortId.generate(),
-          User: {
-            email: faker.internet.email(),
-            nickname: faker.name.findName(),
-          },
-          content: faker.lorem.sentence(),
-        },
-      ],
-    }));
+  addLikeLoading: false, // 좋아요 추가
+  addLikeDone: false,
+  addLikeError: false,
+
+  removeLikeLoading: false, // 좋아요 삭제
+  removeLikeDone: false,
+  removeLikeError: false };
+
+export const ADD_LIKE_REQUEST = 'ADD_LIKE_REQUEST';
+export const ADD_LIKE_SUCCESS = 'ADD_LIKE_SUCCESS';
+export const ADD_LIKE_FAILURE = 'ADD_LIKE_FAILURE';
+
+export const REMOVE_LIKE_REQUEST = 'REMOVE_LIKE_REQUEST';
+export const REMOVE_LIKE_SUCCESS = 'REMOVE_LIKE_SUCCESS';
+export const REMOVE_LIKE_FAILURE = 'REMOVE_LIKE_FAILURE';
 
 export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
 export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
@@ -132,6 +61,44 @@ export const addComment = (data) => ({ type: ADD_COMMENT_REQUEST, data });
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
+      case ADD_LIKE_REQUEST:
+        draft.addLikeLoading = true;
+        draft.addLikeDone = false;
+        draft.addLikeError = false;
+        break;
+
+      case ADD_LIKE_SUCCESS: {
+        const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
+        post.Likers.push(action.data.UserId);
+        draft.addLikeLoading = false;
+        draft.addLikeDone = true;
+        draft.addLikeError = false;
+        break; }
+
+      case ADD_LIKE_FAILURE:
+        draft.addLikeLoading = false;
+        draft.addLikeDone = false;
+        draft.addLikeError = action.error;
+        break;
+
+      case REMOVE_LIKE_REQUEST:
+        draft.removeLikeLoading = true;
+        draft.removeLikeDone = false;
+        draft.removeLikeError = false;
+        break;
+
+      case REMOVE_LIKE_SUCCESS:
+        draft.removeLikeLoading = false;
+        draft.removeLikeDone = true;
+        draft.removeLikeError = false;
+        break;
+
+      case REMOVE_LIKE_FAILURE:
+        draft.removeLikeLoading = false;
+        draft.removeLikeDone = false;
+        draft.removeLikeError = action.error;
+        break;
+
       case LOAD_POST_REQUEST:
         draft.postLoadLoading = true;
         draft.postLoadDone = false;

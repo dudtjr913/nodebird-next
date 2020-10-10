@@ -57,6 +57,21 @@ router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
   }
 });
 
+ router.patch('/:postId/like', async (req,res,next) => {
+  try{
+    const post = await Post.findOne({
+      where : {
+        id : req.params.postId
+      }
+    })
+    post.addLikers({UserId : req.user.id});
+    res.status(200).json(post);
+  }catch(err){
+    console.error(err);
+    next(err);
+  }
+})
+
 router.delete('/', (req, res) => {
   res.json({ id: 1 });
 });

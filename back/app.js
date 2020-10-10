@@ -1,6 +1,7 @@
 const express = require('express');
 const postRouter = require('./routes/post');
 const userRouter = require('./routes/user');
+const postsRouter = require('./routes/posts')
 const db = require('./models');
 const cors = require('cors');
 const passport = require('passport');
@@ -46,6 +47,7 @@ app.get('/api', (req, res) => {
   res.send('hello api');
 });
 
+app.use('/posts', postsRouter);
 app.use('/post', postRouter);
 app.use('/user', userRouter);
 

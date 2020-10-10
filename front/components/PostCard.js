@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Card, Popover, Button, Avatar, Comment, List, Tooltip } from 'antd';
 import {
   RetweetOutlined,
@@ -13,29 +13,29 @@ import moment from 'moment';
 import CommentForm from './CommentForm';
 import PostImages from './PostImages';
 import PostCardContent from './PostCardContent';
-import { REMOVE_POST_REQUEST } from '../reducers/post';
+import { REMOVE_POST_REQUEST, ADD_LIKE_REQUEST, REMOVE_LIKE_REQUEST } from '../reducers/post';
 import FollowButton from './FollowButton';
 
 const PostCard = ({ post }) => {
   const dispatch = useDispatch();
-  const [liked, setLiked] = useState(false);
   const [commented, setCommented] = useState(false);
   const { user } = useSelector((state) => state.user);
   const { postRemoveLoading } = useSelector((state) => state.post);
   const email = user?.email;
 
-  useEffect(() => {
-    if (!user) {
-      setLiked(false);
-    }
-  }, [user]);
+  const onLike = useCallback(() => {
+    dispatch({
+      type: ADD_LIKE_REQUEST,
+      data: post.id,
+    });
+  }, []);
 
-  const handleOnLike = useCallback(() => {
-    if (!user) {
-      return;
-    }
-    setLiked((prev) => !prev);
-  }, [user]);
+  const onRemoveLike = useCallback(() => {
+    dispatch({
+      type: REMOVE_LIKE_REQUEST,
+      data: post.id,
+    });
+  }, []);
 
   const handleOnPostRemove = useCallback(() => {
     dispatch({
@@ -48,6 +48,8 @@ const PostCard = ({ post }) => {
     setCommented((prev) => !prev);
   }, []);
 
+  const like = post.Likers.find((v) => v.id === post.User.id);
+
   return (
     <div>
       <Card
@@ -55,10 +57,10 @@ const PostCard = ({ post }) => {
         cover={post.Images[0] && <PostImages images={post.Images} />}
         actions={[
           <RetweetOutlined key="retweet" />,
-          liked ? (
-            <HeartTwoTone key="twotone" onClick={handleOnLike} />
+          like ? (
+            <HeartTwoTone key="twotone" onClick={onRemoveLike} />
           ) : (
-            <HeartOutlined key="heart" onClick={handleOnLike} />
+            <HeartOutlined key="heart" onClick={onLike} />
           ),
           <MessageOutlined key="comment" onClick={handleOnComment} />,
           <Popover
