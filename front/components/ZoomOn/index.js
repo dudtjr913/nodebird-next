@@ -39,7 +39,7 @@ const ZoomOn = ({ images, ZoomClose }) => {
         >
           {images.map((v) => (
             <ImageWrapper ref={ZoomInput} key={v.src}>
-              <img src={v.src} alt={v.src} />
+              <img src={`http://localhost:3065/${v.src}`} alt={v.src} />
             </ImageWrapper>
           ))}
         </Slider>

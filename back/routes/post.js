@@ -1,15 +1,43 @@
 const express = require('express');
 const { Post, User, Comment, Image } = require('../models');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
+const multer = require('multer');
+const path = require('path');
 
 const router = express.Router();
 
-router.post('/', isLoggedIn, async (req, res, next) => {
+const upload = multer({
+  storage: multer.diskStorage({
+    destination(req, file, done) {
+      done(null, 'uploads');
+    },
+    filename(req, file, done) {
+      //파일.png
+      const ext = path.extname(file.originalname); //확장자 추출 - .png
+      const name = path.basename(file.originalname, ext); //파일명 추출  - 파일
+      done(null, name + '_' + new Date().getTime() + ext); // 파일1512311.png
+    },
+  }),
+  limits: { fileSize: 20 * 1024 * 1024 },
+});
+
+router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
   try {
     const post = await Post.create({
       content: req.body.content,
       UserId: req.user.id,
     });
+    if (req.body.image) {
+      if (Array.isArray(req.body.image)) {
+        const images = await Promise.all(
+          req.body.image.map((src) => Image.create({ src })),
+        );
+        await post.addImages(images);
+      } else {
+        const image = await Image.create({ src: req.body.image });
+        await post.addImages(image);
+      }
+    }
     const fullInfPost = await Post.findOne({
       where: { id: post.id },
       attributes: ['id', 'content'],
@@ -36,6 +64,10 @@ router.post('/', isLoggedIn, async (req, res, next) => {
     console.error(err);
     next(err);
   }
+});
+
+router.post('/images', isLoggedIn, upload.array('image'), (req, res, next) => {
+  res.status(200).json(req.files.map((v) => v.filename));
 });
 
 router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {

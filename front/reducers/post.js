@@ -29,6 +29,10 @@ export const initialState = {
   removeLikeLoading: false, // 좋아요 삭제
   removeLikeDone: false,
   removeLikeError: false,
+
+  uploadImagesLoading: false, // 이미지 업로드
+  uploadImagesDone: false,
+  uploadImagesError: false,
 };
 
 export const ADD_LIKE_REQUEST = 'ADD_LIKE_REQUEST';
@@ -55,7 +59,11 @@ export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
 export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
 
-export const addPost = (data) => ({ type: ADD_POST_REQUEST, data });
+export const UPLOAD_IMAGES_REQUEST = 'UPLOAD_IMAGES_REQUEST';
+export const UPLOAD_IMAGES_SUCCESS = 'UPLOAD_IMAGES_SUCCESS';
+export const UPLOAD_IMAGES_FAILURE = 'UPLOAD_IMAGES_FAILURE';
+
+export const REMOVE_UPLOAD_IMAGE = 'REMOVE_UPLOAD_IMAGE';
 
 export const addComment = (data) => ({ type: ADD_COMMENT_REQUEST, data });
 
@@ -138,6 +146,7 @@ const reducer = (state = initialState, action) =>
         draft.postAddDone = true;
         draft.postAddError = false;
         draft.mainPosts.unshift(action.data);
+        draft.imagePaths = [];
         break;
 
       case ADD_POST_FAILURE:
@@ -188,6 +197,29 @@ const reducer = (state = initialState, action) =>
         draft.postRemoveLoading = false;
         draft.postRemoveDone = false;
         draft.postRemoveError = action.error;
+        break;
+
+      case UPLOAD_IMAGES_REQUEST:
+        draft.uploadImagesLoading = true;
+        draft.uploadImagesDone = false;
+        draft.uploadImagesError = false;
+        break;
+
+      case UPLOAD_IMAGES_SUCCESS:
+        draft.uploadImagesLoading = false;
+        draft.uploadImagesDone = true;
+        draft.uploadImagesError = false;
+        action.data.forEach((v) => draft.imagePaths.push(v));
+        break;
+
+      case UPLOAD_IMAGES_FAILURE:
+        draft.uploadImagesLoading = false;
+        draft.uploadImagesDone = false;
+        draft.uploadImagesError = action.error;
+        break;
+
+      case REMOVE_UPLOAD_IMAGE:
+        draft.imagePaths.splice(action.data, 1);
         break;
 
       default:

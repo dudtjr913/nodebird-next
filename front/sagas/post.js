@@ -20,6 +20,9 @@ import {
   REMOVE_LIKE_REQUEST,
   REMOVE_LIKE_SUCCESS,
   REMOVE_LIKE_FAILURE,
+  UPLOAD_IMAGES_REQUEST,
+  UPLOAD_IMAGES_SUCCESS,
+  UPLOAD_IMAGES_FAILURE,
 } from '../reducers/post';
 
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
@@ -148,6 +151,25 @@ function* removePost(action) {
   }
 }
 
+function uploadImagesData(data) {
+  return axios.post('/post/images', data);
+}
+
+function* uploadImages(action) {
+  try {
+    const result = yield call(uploadImagesData, action.data);
+    yield put({
+      type: UPLOAD_IMAGES_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: UPLOAD_IMAGES_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 function* watchLoadPost() {
   yield takeLatest(LOAD_POST_REQUEST, loadPosts);
 }
@@ -172,6 +194,10 @@ function* watchRemoveLike() {
   yield takeLatest(REMOVE_LIKE_REQUEST, removeLike);
 }
 
+function* watchUploadImages() {
+  yield takeLatest(UPLOAD_IMAGES_REQUEST, uploadImages);
+}
+
 export default function* rootSaga() {
   yield all([
     fork(watchLoadPost),
@@ -180,5 +206,6 @@ export default function* rootSaga() {
     fork(watchRemovePost),
     fork(watchAddLike),
     fork(watchRemoveLike),
+    fork(watchUploadImages),
   ]);
 }

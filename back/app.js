@@ -10,6 +10,15 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passportConfig = require('./passport');
 const dotenv = require('dotenv');
+const fs = require('fs');
+const path = require('path');
+
+try {
+  fs.accessSync('uploads');
+} catch (err) {
+  console.log('uploads폴더를 생성하였습니다.');
+  fs.mkdirSync('uploads');
+}
 
 db.sequelize
   .sync()
@@ -24,6 +33,7 @@ db.sequelize
 passportConfig();
 dotenv.config();
 
+app.use('/', express.static(path.join(__dirname, 'uploads')));
 app.use(
   cors({
     origin: 'http://localhost:3060',
