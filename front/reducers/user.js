@@ -33,6 +33,10 @@ export const initialState = {
   loadMyFollowersDone: false,
   loadMyFollowersError: false,
 
+  removeMyFollowerLoading: false,
+  removeMyFollowerDone: false,
+  removeMyFollowerError: false,
+
   changeNicknameLoading: false,
   changeNicknameDone: false,
   changeNicknameError: false,
@@ -80,6 +84,10 @@ export const LOAD_MY_FOLLOWINGS_FAILURE = 'LOAD_MY_FOLLOWINGS_FAILURE';
 export const LOAD_MY_FOLLOWERS_REQUEST = 'LOAD_MY_FOLLOWERS_REQUEST';
 export const LOAD_MY_FOLLOWERS_SUCCESS = 'LOAD_MY_FOLLOWERS_SUCCESS';
 export const LOAD_MY_FOLLOWERS_FAILURE = 'LOAD_MY_FOLLOWERS_FAILURE';
+
+export const REMOVE_MY_FOLLOWER_REQUEST = 'REMOVE_MY_FOLLOWER_REQUEST';
+export const REMOVE_MY_FOLLOWER_SUCCESS = 'REMOVE_MY_FOLLOWER_SUCCESS';
+export const REMOVE_MY_FOLLOWER_FAILURE = 'REMOVE_MY_FOLLOWER_FAILURE';
 
 export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
 export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
@@ -192,7 +200,9 @@ const reducer = (state = initialState, action) =>
       case UNFOLLOW_REQUEST:
         draft.unfollowLoading = true;
         draft.unfollowError = false;
-        draft.unfollowingPostId = action.data.postId;
+        draft.unfollowingPostId = action.data.postId
+          ? action.data.postId
+          : null;
         break;
 
       case UNFOLLOW_SUCCESS:
@@ -268,6 +278,29 @@ const reducer = (state = initialState, action) =>
         draft.loadMyFollowersLoading = false;
         draft.loadMyFollowersDone = false;
         draft.loadMyFollowersError = action.error;
+        break;
+
+      case REMOVE_MY_FOLLOWER_REQUEST:
+        draft.removeMyFollowerLoading = true;
+        draft.removeMyFollowerError = false;
+        break;
+
+      case REMOVE_MY_FOLLOWER_SUCCESS: {
+        const followerIndex = draft.user.Followers.findIndex(
+          (v) => v.id === action.data.id,
+        );
+        console.log(followerIndex);
+        draft.user.Followers.splice(followerIndex, 1);
+        draft.removeMyFollowerLoading = false;
+        draft.removeMyFollowerDone = true;
+        draft.removeMyFollowerError = false;
+        break;
+      }
+
+      case REMOVE_MY_FOLLOWER_FAILURE:
+        draft.removeMyFollowerLoading = false;
+        draft.removeMyFollowerDone = false;
+        draft.removeMyFollowerError = action.error;
         break;
 
       case CHANGE_NICKNAME_REQUEST:

@@ -29,6 +29,9 @@ import {
   LOAD_MY_FOLLOWERS_REQUEST,
   LOAD_MY_FOLLOWERS_SUCCESS,
   LOAD_MY_FOLLOWERS_FAILURE,
+  REMOVE_MY_FOLLOWER_REQUEST,
+  REMOVE_MY_FOLLOWER_SUCCESS,
+  REMOVE_MY_FOLLOWER_FAILURE,
 } from '../reducers/user';
 
 function logInData(data) {
@@ -189,6 +192,25 @@ function* loadMyFollowers() {
   }
 }
 
+function removeMyFollowerData(data) {
+  return axios.delete(`/user/${data.userId}/follower`);
+}
+
+function* removeMyFollower(action) {
+  try {
+    const result = yield call(removeMyFollowerData, action.data);
+    yield put({
+      type: REMOVE_MY_FOLLOWER_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: REMOVE_MY_FOLLOWER_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 function changeNicknameData(data) {
   return axios.patch('/user/nickname', { nickname: data });
 }
@@ -240,6 +262,10 @@ function* watchLoadMyFollowers() {
   yield takeLatest(LOAD_MY_FOLLOWERS_REQUEST, loadMyFollowers);
 }
 
+function* watchRemoveMyFollower() {
+  yield takeLatest(REMOVE_MY_FOLLOWER_REQUEST, removeMyFollower);
+}
+
 function* watchChangeNickname() {
   yield takeLatest(CHANGE_NICKNAME_REQUEST, changeNickname);
 }
@@ -254,6 +280,7 @@ export default function* rootSaga() {
     fork(watchLoadMyInfo),
     fork(watchLoadMyFollowings),
     fork(watchLoadMyFollowers),
+    fork(watchRemoveMyFollower),
     fork(watchChangeNickname),
   ]);
 }
