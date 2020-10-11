@@ -48,7 +48,7 @@ export const ImageWrapper = styled.div`
   text-align: center;
   & img {
     margin: auto;
-    max-height: 700px;
+    max-width: 90%;
   }
 `;
 

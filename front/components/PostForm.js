@@ -25,10 +25,13 @@ const PostForm = () => {
   }, [postAddDone]);
 
   const onSubmit = useCallback(() => {
+    if (!text || !text.trim()) {
+      return alert('글을 작성해주세요.');
+    }
     const formData = new FormData();
     imagePaths.forEach((src) => formData.append('image', src));
     formData.append('content', text);
-    dispatch({
+    return dispatch({
       type: ADD_POST_REQUEST,
       data: formData,
     });
