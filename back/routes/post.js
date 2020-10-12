@@ -1,5 +1,5 @@
 const express = require('express');
-const { Post, User, Comment, Image } = require('../models');
+const { Post, User, Comment, Image, Hashtag } = require('../models');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 const multer = require('multer');
 const path = require('path');
@@ -18,48 +18,64 @@ const upload = multer({
       done(null, name + '_' + new Date().getTime() + ext); // 파일1512311.png
     },
   }),
-  limits: { fileSize: 20 * 1024 * 1024 },
+  limits: { fileSize: 20 * 1024 * 1024 }, //20메가 제한
 });
 
 router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
   try {
+    const hashtags = req.body.content.match(/#[^\s#]+/g);
     const post = await Post.create({
       content: req.body.content,
       UserId: req.user.id,
     });
-    if (req.body.image) {
-      if (Array.isArray(req.body.image)) {
-        const images = await Promise.all(
-          req.body.image.map((src) => Image.create({ src })),
-        );
-        await post.addImages(images);
-      } else {
-        const image = await Image.create({ src: req.body.image });
-        await post.addImages(image);
+    if (hashtags) {
+      await Promise.all(
+        hashtags.map(async (hash) => {
+          try {
+            const result = await Hashtag.findOrCreate({
+              where: {
+                name: hash.slice(1).toLowerCase(),
+              },
+            }).then(post.addHashtags(result[0]));
+          } catch (err) {
+            console.error(err);
+          }
+        }),
+      );
+      if (req.body.image) {
+        if (Array.isArray(req.body.image)) {
+          const images = await Promise.all(
+            req.body.image.map((src) => Image.create({ src })),
+          );
+          await post.addImages(images);
+        } else {
+          const image = await Image.create({ src: req.body.image });
+          await post.addImages(image);
+        }
       }
-    }
-    const fullInfPost = await Post.findOne({
-      where: { id: post.id },
-      attributes: ['id', 'content'],
-      include: [
-        {
-          model: Comment,
-        },
-        {
-          model: Image,
-        },
-        {
-          model: User, // 게시글 작성자
-          attributes: ['id', 'email', 'nickname'],
-        },
+      const fullInfPost = await Post.findOne({
+        where: { id: post.id },
+        attributes: ['id', 'content'],
+        include: [
+          {
+            model: Comment,
+          },
+          {
+            model: Image,
+          },
+          {
+            model: User, // 게시글 작성자
+            attributes: ['id', 'email', 'nickname'],
+          },
 
-        {
-          model: User, // 좋아요를 표시한 사람
-          as: 'Likers',
-        },
-      ],
-    });
-    res.status(200).json(fullInfPost);
+          {
+            model: User, // 좋아요를 표시한 사람
+            as: 'Likers',
+          },
+        ],
+      });
+      res.status(200).json(fullInfPost);
+    }
   } catch (err) {
     console.error(err);
     next(err);
