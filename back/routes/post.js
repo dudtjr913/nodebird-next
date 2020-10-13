@@ -29,53 +29,44 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
       UserId: req.user.id,
     });
     if (hashtags) {
-      await Promise.all(
-        hashtags.map(async (hash) => {
-          try {
-            const result = await Hashtag.findOrCreate({
-              where: {
-                name: hash.slice(1).toLowerCase(),
-              },
-            }).then(post.addHashtags(result[0]));
-          } catch (err) {
-            console.error(err);
-          }
-        }),
-      );
-      if (req.body.image) {
-        if (Array.isArray(req.body.image)) {
-          const images = await Promise.all(
-            req.body.image.map((src) => Image.create({ src })),
-          );
-          await post.addImages(images);
-        } else {
-          const image = await Image.create({ src: req.body.image });
-          await post.addImages(image);
-        }
-      }
-      const fullInfPost = await Post.findOne({
-        where: { id: post.id },
-        attributes: ['id', 'content'],
-        include: [
-          {
-            model: Comment,
-          },
-          {
-            model: Image,
-          },
-          {
-            model: User, // 게시글 작성자
-            attributes: ['id', 'email', 'nickname'],
-          },
-
-          {
-            model: User, // 좋아요를 표시한 사람
-            as: 'Likers',
-          },
-        ],
+      hashtags.forEach((hash) => {
+        let result = [1];
       });
-      res.status(200).json(fullInfPost);
     }
+
+    if (req.body.image) {
+      if (Array.isArray(req.body.image)) {
+        const images = await Promise.all(
+          req.body.image.map((src) => Image.create({ src })),
+        );
+        await post.addImages(images);
+      } else {
+        const image = await Image.create({ src: req.body.image });
+        await post.addImages(image);
+      }
+    }
+    const fullInfPost = await Post.findOne({
+      where: { id: post.id },
+      attributes: ['id', 'content'],
+      include: [
+        {
+          model: Comment,
+        },
+        {
+          model: Image,
+        },
+        {
+          model: User, // 게시글 작성자
+          attributes: ['id', 'email', 'nickname'],
+        },
+
+        {
+          model: User, // 좋아요를 표시한 사람
+          as: 'Likers',
+        },
+      ],
+    });
+    res.status(200).json(fullInfPost);
   } catch (err) {
     console.error(err);
     next(err);
