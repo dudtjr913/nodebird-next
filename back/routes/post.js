@@ -29,9 +29,23 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
       UserId: req.user.id,
     });
     if (hashtags) {
-      hashtags.forEach((hash) => {
-        let result = [1];
-      });
+      const result = [];
+      for (let i = 0; i < hashtags.length; i++) {
+        if (!result.find((v) => v === hashtags[i])) {
+          result.push(hashtags[i]);
+        }
+      }
+      const noRepResult = await Promise.all(
+        result.map((hash) =>
+          Hashtag.findOrCreate({
+            where: {
+              name: hash.slice(1).toLowerCase(),
+            },
+          }),
+        ),
+      );
+      console.log(noRepResult);
+      await post.addHashtags(noRepResult.map((v) => v[0]));
     }
 
     if (req.body.image) {
