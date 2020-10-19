@@ -44,7 +44,6 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
           }),
         ),
       );
-      console.log(noRepResult);
       await post.addHashtags(noRepResult.map((v) => v[0]));
     }
 
@@ -93,6 +92,12 @@ router.post('/images', isLoggedIn, upload.array('image'), (req, res, next) => {
 
 router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
   try {
+    const post = await Post.findOne({
+      where: { id: req.params.postId },
+    });
+    if (!post) {
+      return res.status(403).send('존재하지 않는 게시글입니다.');
+    }
     const comment = await Comment.create({
       content: req.body.comment,
       UserId: req.user.id,
@@ -109,6 +114,91 @@ router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
       ],
     });
     res.status(200).json(fullInfComment);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+router.post('/:postId/retweet', isLoggedIn, async (req, res, next) => {
+  try {
+    const post = await Post.findOne({
+      where: { id: req.params.postId },
+      include: [
+        {
+          model: Post,
+          as: 'Retweet',
+        },
+      ],
+    });
+
+    if (!post) {
+      return res.status(403).send('존재하지 않는 게시글입니다.');
+    }
+    if (
+      req.user.id === post.UserId ||
+      (post.Retweet && post.Retweet.UserId === req.user.id)
+    ) {
+      return res.status(403).send('자신의 글은 리트윗할 수 없습니다.');
+    }
+    const retweetTargetId = post.RetweetId || post.id;
+    const exPost = await Post.findOne({
+      where: {
+        UserId: req.user.id,
+        RetweetId: retweetTargetId,
+      },
+    });
+    if (exPost) {
+      return res.status(403).send('이미 리트윗했습니다.');
+    }
+    const retweet = await Post.create({
+      UserId: req.user.id,
+      RetweetId: retweetTargetId,
+      content: '리트윗',
+    });
+    const fullInfRetweetPost = await Post.findOne({
+      where: { id: retweet.id },
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'nickname', 'email'],
+        },
+        {
+          model: Image,
+        },
+        {
+          model: Comment,
+          include: [
+            {
+              model: User,
+              attributes: ['id', 'nickname', 'email'],
+            },
+          ],
+        },
+        {
+          model: User,
+          as: 'Likers',
+          attributes: ['id'],
+          through: {
+            attributes: [],
+          },
+        },
+        {
+          model: Post,
+          as: 'Retweet',
+          include: [
+            {
+              model: Image,
+            },
+            {
+              model: User,
+              attributes: ['id', 'nickname', 'email'],
+            },
+          ],
+        },
+      ],
+    });
+    res.status(200).json(fullInfRetweetPost);
   } catch (err) {
     console.error(err);
     next(err);

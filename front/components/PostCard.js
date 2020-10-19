@@ -17,6 +17,7 @@ import {
   REMOVE_POST_REQUEST,
   ADD_LIKE_REQUEST,
   REMOVE_LIKE_REQUEST,
+  RETWEET_REQUEST,
 } from '../reducers/post';
 import FollowButton from './FollowButton';
 
@@ -29,31 +30,50 @@ const PostCard = ({ post }) => {
 
   const onLike = useCallback(() => {
     if (!user) {
-      return;
+      return alert('로그인이 필요합니다.');
     }
-    dispatch({
+    return dispatch({
       type: ADD_LIKE_REQUEST,
       data: post.id,
     });
   }, [user]);
 
   const onRemoveLike = useCallback(() => {
-    dispatch({
+    if (!user) {
+      return alert('로그인이 필요합니다.');
+    }
+    return dispatch({
       type: REMOVE_LIKE_REQUEST,
       data: post.id,
     });
-  }, []);
+  }, [user]);
+
+  const onRetweet = useCallback(() => {
+    if (!user) {
+      return alert('로그인이 필요합니다.');
+    }
+    return dispatch({
+      type: RETWEET_REQUEST,
+      data: post.id,
+    });
+  }, [user]);
 
   const handleOnPostRemove = useCallback(() => {
-    dispatch({
+    if (!user) {
+      return alert('로그인이 필요합니다.');
+    }
+    return dispatch({
       type: REMOVE_POST_REQUEST,
       data: post.id,
     });
-  }, []);
+  }, [user]);
 
   const handleOnComment = useCallback(() => {
-    setCommented((prev) => !prev);
-  }, []);
+    if (!user) {
+      return alert('로그인이 필요합니다.');
+    }
+    return setCommented((prev) => !prev);
+  }, [user]);
 
   const like = user && post.Likers.find((v) => v.id === post.User.id);
 
@@ -63,7 +83,7 @@ const PostCard = ({ post }) => {
         style={{ width: '90%', margin: 'auto' }}
         cover={post.Images[0] && <PostImages images={post.Images} />}
         actions={[
-          <RetweetOutlined key="retweet" />,
+          <RetweetOutlined key="retweet" onClick={onRetweet} />,
           like ? (
             <HeartTwoTone key="twotone" onClick={onRemoveLike} />
           ) : (
@@ -95,18 +115,47 @@ const PostCard = ({ post }) => {
           </Popover>,
         ]}
       >
-        <Card.Meta
-          avatar={<Avatar>{post.User.email[0].toUpperCase()}</Avatar>}
-          title={
-            <div>
-              <span>{post.User.nickname}</span>
-              {user && email !== post.User.email && (
-                <FollowButton postId={post.id} userId={post.User.id} />
-              )}
-            </div>
-          }
-          description={<PostCardContent postData={post.content} />}
-        />
+        {post.RetweetId && post.Retweet ? (
+          <Card
+            title={`${post.User.nickname}님이 리트윗한 게시글입니다.`}
+            cover={
+              post.Retweet.Images[0] && (
+                <PostImages images={post.Retweet.Images} />
+              )
+            }
+          >
+            <Card.Meta
+              avatar={
+                <Avatar>{post.Retweet.User.email[0].toUpperCase()}</Avatar>
+              }
+              title={
+                <div>
+                  <span>{post.Retweet.User.nickname}</span>
+                  {user && email !== post.Retweet.User.email && (
+                    <FollowButton
+                      postId={post.Retweet.id}
+                      userId={post.Retweet.User.id}
+                    />
+                  )}
+                </div>
+              }
+              description={<PostCardContent postData={post.Retweet.content} />}
+            />
+          </Card>
+        ) : (
+          <Card.Meta
+            avatar={<Avatar>{post.User.email[0].toUpperCase()}</Avatar>}
+            title={
+              <div>
+                <span>{post.User.nickname}</span>
+                {user && email !== post.User.email && (
+                  <FollowButton postId={post.id} userId={post.User.id} />
+                )}
+              </div>
+            }
+            description={<PostCardContent postData={post.content} />}
+          />
+        )}
       </Card>
       {commented && (
         <div>
@@ -165,6 +214,8 @@ PostCard.propTypes = {
         PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       ),
     ),
+    RetweetId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    Retweet: PropTypes.objectOf(PropTypes.any),
   }).isRequired,
 };
 
