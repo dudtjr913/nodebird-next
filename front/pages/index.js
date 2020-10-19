@@ -43,9 +43,10 @@ const Home = () => {
         document.documentElement.scrollHeight - 400
       ) {
         if (hasPosts && !postLoadLoading) {
-          console.log('AA');
+          const lastId = mainPosts[mainPosts.length - 1]?.id; // mainPosts가 존재할때만 lastId를 생성
           dispatch({
             type: LOAD_POST_REQUEST,
+            lastId,
           });
         }
       }
@@ -54,7 +55,7 @@ const Home = () => {
     return () => {
       window.removeEventListener('scroll', handleOnscroll);
     };
-  }, [postLoadLoading]);
+  }, [postLoadLoading, hasPosts, mainPosts]);
 
   return (
     <>

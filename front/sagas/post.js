@@ -30,13 +30,13 @@ import {
 
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
 
-function loadPostsData() {
-  return axios.get('/posts');
+function loadPostsData(lastId) {
+  return axios.get(`/posts?lastId=${lastId || 0}`); // get에서 데이터를 넣는 법 -> 쿼리스트링
 }
 
-function* loadPosts() {
+function* loadPosts(action) {
   try {
-    const result = yield call(loadPostsData);
+    const result = yield call(loadPostsData, action.lastId);
     yield delay(1000);
     yield put({
       type: LOAD_POST_SUCCESS,

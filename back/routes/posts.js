@@ -1,11 +1,18 @@
 const express = require('express');
 const { Post, Image, Comment, User } = require('../models');
+const { Op } = require('sequelize');
 
 const router = express.Router();
 
 router.get('/', async (req, res, next) => {
   try {
+    const where = {};
+    if (parseInt(req.query.lastId, 10)) {
+      //초기 로딩이 아닐 때 즉, mainPosts가 존재할 때
+      where.id = { [Op.lt]: parseInt(req.query.lastId, 10) }; // Op는 sequelize에서 제공하는 것으로 Op.lt는 뒤의 값보다 작은 값을 가져온다.
+    }
     const posts = await Post.findAll({
+      where,
       limit: 10,
       order: [['createdAt', 'DESC']],
       include: [
