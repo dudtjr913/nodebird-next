@@ -4,21 +4,18 @@ import { combineReducers } from 'redux';
 import user from './user';
 import post from './post';
 
-const rootReducer = combineReducers({
-  index: (state = {}, action) => {
-    switch (action.type) {
-      case HYDRATE:
-        console.log('HYDRATE', action); // HYDRATE는 ssr을 위한 것
-        return {
-          ...state,
-          ...action.payload,
-        };
-      default:
-        return state;
+const rootReducer = (state, action) => {
+  switch (action.type) {
+    case HYDRATE:
+      return {
+        ...state,
+        ...action.payload,
+      };
+    default: {
+      const combinedReducers = combineReducers({ user, post });
+      return combinedReducers(state, action);
     }
-  },
-  user,
-  post,
-});
+  }
+};
 
 export default rootReducer;

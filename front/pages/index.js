@@ -4,12 +4,15 @@ next.js는 React의 프레임워크이기 때문에 import React from "react"를
 import React, { useEffect } from 'react';
 import Head from 'next/head';
 import { useSelector, useDispatch } from 'react-redux';
+import { END } from 'redux-saga';
+import axios from 'axios';
 import AppLayout from '../components/AppLayout';
 import PostForm from '../components/PostForm';
 import PostCard from '../components/PostCard';
 import { LOAD_POST_REQUEST } from '../reducers/post';
 import ScreenUp from '../components/ScreenUp';
 import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
+import wrapper from '../store/configureStore';
 
 const Home = () => {
   const { user } = useSelector((state) => state.user);
@@ -23,18 +26,6 @@ const Home = () => {
       alert(retweetError);
     }
   }, [retweetError]);
-
-  useEffect(() => {
-    dispatch({
-      type: LOAD_MY_INFO_REQUEST,
-    });
-  }, []);
-
-  useEffect(() => {
-    dispatch({
-      type: LOAD_POST_REQUEST,
-    });
-  }, []);
 
   useEffect(() => {
     const handleOnscroll = () => {
@@ -72,5 +63,27 @@ const Home = () => {
     </>
   );
 };
+
+export const getServerSideProps = wrapper.getServerSideProps(
+  async (context) => {
+    const cookie = context.req && context.req.headers.cookie;
+    axios.defaults.headers.Cookie = '';
+    if (context.req && cookie) {
+      axios.defaults.headers.Cookie = cookie;
+    }
+    try {
+      context.store.dispatch({
+        type: LOAD_MY_INFO_REQUEST,
+      });
+      context.store.dispatch({
+        type: LOAD_POST_REQUEST,
+      });
+      context.store.dispatch(END);
+      await context.store.sagaTask.toPromise();
+    } catch (err) {
+      console.error(err);
+    }
+  },
+);
 
 export default Home;
