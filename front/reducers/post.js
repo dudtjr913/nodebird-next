@@ -5,8 +5,13 @@ export const initialState = {
   imagePaths: [],
 
   hasPosts: true, // 포스트 로딩을 위한 포스트 데이터를 가지고 있는지에 대한 여부(너무 많으면 컷하기 위함)
+  singlePost: null, // 개별 포스트
 
-  postLoadLoading: false, // 포스트 로딩
+  postsLoadLoading: false, // 포스트 로딩
+  postsLoadDone: false,
+  postsLoadError: false,
+
+  postLoadLoading: false, // 개별 포스트 로딩
   postLoadDone: false,
   postLoadError: false,
 
@@ -46,6 +51,10 @@ export const ADD_LIKE_FAILURE = 'ADD_LIKE_FAILURE';
 export const REMOVE_LIKE_REQUEST = 'REMOVE_LIKE_REQUEST';
 export const REMOVE_LIKE_SUCCESS = 'REMOVE_LIKE_SUCCESS';
 export const REMOVE_LIKE_FAILURE = 'REMOVE_LIKE_FAILURE';
+
+export const LOAD_POSTS_REQUEST = 'LOAD_POSTS_REQUEST';
+export const LOAD_POSTS_SUCCESS = 'LOAD_POSTS_SUCCESS';
+export const LOAD_POSTS_FAILURE = 'LOAD_POSTS_FAILURE';
 
 export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
 export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
@@ -123,6 +132,26 @@ const reducer = (state = initialState, action) =>
         draft.removeLikeError = action.error;
         break;
 
+      case LOAD_POSTS_REQUEST:
+        draft.postsLoadLoading = true;
+        draft.postsLoadDone = false;
+        draft.postsLoadError = false;
+        break;
+
+      case LOAD_POSTS_SUCCESS:
+        draft.postsLoadLoading = false;
+        draft.postsLoadDone = true;
+        draft.postsLoadError = false;
+        Array.prototype.push.apply(draft.mainPosts, action.data);
+        draft.hasPosts = action.data.length === 10;
+        break;
+
+      case LOAD_POSTS_FAILURE:
+        draft.postsLoadLoading = false;
+        draft.postsLoadDone = false;
+        draft.postsLoadError = action.error;
+        break;
+
       case LOAD_POST_REQUEST:
         draft.postLoadLoading = true;
         draft.postLoadDone = false;
@@ -133,8 +162,7 @@ const reducer = (state = initialState, action) =>
         draft.postLoadLoading = false;
         draft.postLoadDone = true;
         draft.postLoadError = false;
-        Array.prototype.push.apply(draft.mainPosts, action.data);
-        draft.hasPosts = action.data.length === 10;
+        draft.singlePost = action.data;
         break;
 
       case LOAD_POST_FAILURE:

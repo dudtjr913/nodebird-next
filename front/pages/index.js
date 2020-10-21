@@ -9,14 +9,14 @@ import axios from 'axios';
 import AppLayout from '../components/AppLayout';
 import PostForm from '../components/PostForm';
 import PostCard from '../components/PostCard';
-import { LOAD_POST_REQUEST } from '../reducers/post';
+import { LOAD_POSTS_REQUEST } from '../reducers/post';
 import ScreenUp from '../components/ScreenUp';
 import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
 import wrapper from '../store/configureStore';
 
 const Home = () => {
   const { user } = useSelector((state) => state.user);
-  const { mainPosts, postLoadLoading, hasPosts, retweetError } = useSelector(
+  const { mainPosts, postsLoadLoading, hasPosts, retweetError } = useSelector(
     (state) => state.post,
   );
   const dispatch = useDispatch();
@@ -33,10 +33,10 @@ const Home = () => {
         window.scrollY + document.documentElement.clientHeight >
         document.documentElement.scrollHeight - 400
       ) {
-        if (hasPosts && !postLoadLoading) {
+        if (hasPosts && !postsLoadLoading) {
           const lastId = mainPosts[mainPosts.length - 1]?.id; // mainPosts가 존재할때만 lastId를 생성
           dispatch({
-            type: LOAD_POST_REQUEST,
+            type: LOAD_POSTS_REQUEST,
             lastId,
           });
         }
@@ -46,7 +46,7 @@ const Home = () => {
     return () => {
       window.removeEventListener('scroll', handleOnscroll);
     };
-  }, [postLoadLoading, hasPosts, mainPosts]);
+  }, [postsLoadLoading, hasPosts, mainPosts]);
 
   return (
     <>
@@ -76,7 +76,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
         type: LOAD_MY_INFO_REQUEST,
       });
       context.store.dispatch({
-        type: LOAD_POST_REQUEST,
+        type: LOAD_POSTS_REQUEST,
       });
       context.store.dispatch(END);
       await context.store.sagaTask.toPromise();

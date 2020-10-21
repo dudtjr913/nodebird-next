@@ -90,6 +90,65 @@ router.post('/images', isLoggedIn, upload.array('image'), (req, res, next) => {
   res.status(200).json(req.files.map((v) => v.filename));
 });
 
+router.get('/:postId', async (req, res, next) => {
+  try {
+    const post = await Post.findOne({
+      where: {
+        id: req.params.postId,
+      },
+    });
+    if (!post) {
+      return res.status(403).send('존재하지 않는 게시물입니다.');
+    }
+    const fullInfPost = await Post.findOne({
+      where: { id: post.id },
+      include: [
+        {
+          model: Image,
+        },
+        {
+          model: Comment,
+          include: [
+            {
+              model: User, //댓글 작성자
+              attributes: ['id', 'email', 'nickname'],
+            },
+          ],
+        },
+        {
+          model: User, // 게시글 작성자
+          attributes: ['id', 'email', 'nickname'],
+        },
+        {
+          model: User, // 좋아요를 표시한 사람
+          as: 'Likers',
+          attributes: ['id'],
+          through: {
+            attributes: [],
+          },
+        },
+        {
+          model: Post,
+          as: 'Retweet',
+          include: [
+            {
+              model: Image,
+            },
+            {
+              model: User,
+              attributes: ['id', 'nickname', 'email'],
+            },
+          ],
+        },
+      ],
+    });
+    res.status(200).json(fullInfPost);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
 router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
   try {
     const post = await Post.findOne({

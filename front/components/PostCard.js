@@ -32,6 +32,7 @@ const PostCard = ({ post }) => {
     if (!user) {
       return alert('로그인이 필요합니다.');
     }
+    console.log(post.id);
     return dispatch({
       type: ADD_LIKE_REQUEST,
       data: post.id,
