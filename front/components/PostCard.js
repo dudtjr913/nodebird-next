@@ -24,12 +24,12 @@ import FollowButton from './FollowButton';
 const PostCard = ({ post }) => {
   const dispatch = useDispatch();
   const [commented, setCommented] = useState(false);
-  const { user } = useSelector((state) => state.user);
+  const { me } = useSelector((state) => state.user);
   const { postRemoveLoading } = useSelector((state) => state.post);
-  const email = user?.email;
+  const email = me?.email;
 
   const onLike = useCallback(() => {
-    if (!user) {
+    if (!me) {
       return alert('로그인이 필요합니다.');
     }
     console.log(post.id);
@@ -37,46 +37,46 @@ const PostCard = ({ post }) => {
       type: ADD_LIKE_REQUEST,
       data: post.id,
     });
-  }, [user]);
+  }, [me]);
 
   const onRemoveLike = useCallback(() => {
-    if (!user) {
+    if (!me) {
       return alert('로그인이 필요합니다.');
     }
     return dispatch({
       type: REMOVE_LIKE_REQUEST,
       data: post.id,
     });
-  }, [user]);
+  }, [me]);
 
   const onRetweet = useCallback(() => {
-    if (!user) {
+    if (!me) {
       return alert('로그인이 필요합니다.');
     }
     return dispatch({
       type: RETWEET_REQUEST,
       data: post.id,
     });
-  }, [user]);
+  }, [me]);
 
   const handleOnPostRemove = useCallback(() => {
-    if (!user) {
+    if (!me) {
       return alert('로그인이 필요합니다.');
     }
     return dispatch({
       type: REMOVE_POST_REQUEST,
       data: post.id,
     });
-  }, [user]);
+  }, [me]);
 
   const handleOnComment = useCallback(() => {
-    if (!user) {
+    if (!me) {
       return alert('로그인이 필요합니다.');
     }
     return setCommented((prev) => !prev);
-  }, [user]);
+  }, [me]);
 
-  const like = user && post.Likers.find((v) => v.id === post.User.id);
+  const like = me && post.Likers.find((v) => v.id === post.User.id);
 
   return (
     <div>
@@ -132,7 +132,7 @@ const PostCard = ({ post }) => {
               title={
                 <div>
                   <span>{post.Retweet.User.nickname}</span>
-                  {user && email !== post.Retweet.User.email && (
+                  {me && email !== post.Retweet.User.email && (
                     <FollowButton
                       postId={post.Retweet.id}
                       userId={post.Retweet.User.id}
@@ -149,7 +149,7 @@ const PostCard = ({ post }) => {
             title={
               <div>
                 <span>{post.User.nickname}</span>
-                {user && email !== post.User.email && (
+                {me && email !== post.User.email && (
                   <FollowButton postId={post.id} userId={post.User.id} />
                 )}
               </div>
@@ -160,7 +160,7 @@ const PostCard = ({ post }) => {
       </Card>
       {commented && (
         <div>
-          {user && <CommentForm post={post} />}
+          {me && <CommentForm post={post} />}
           <List
             style={{ width: '90%', margin: 'auto' }}
             header={`${post.Comments.length}개의 댓글`}

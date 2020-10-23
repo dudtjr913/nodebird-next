@@ -12,7 +12,7 @@ const SearchInput = styled(Input.Search)`
 `;
 
 const AppLayout = ({ children }) => {
-  const { user } = useSelector((state) => state.user);
+  const { me } = useSelector((state) => state.user);
 
   return (
     <div>
@@ -30,7 +30,7 @@ const AppLayout = ({ children }) => {
         <Menu.Item>
           <SearchInput placeholder="input search text" enterButton />
         </Menu.Item>
-        {!user && (
+        {!me && (
           <Menu.Item>
             <Link href="/signup">
               <a>회원가입</a>
@@ -40,7 +40,7 @@ const AppLayout = ({ children }) => {
       </Menu>
       <Row gutter={8}>
         <Col xs={24} md={6}>
-          {user ? <UserProfile /> : <LoginForm />}
+          {me ? <UserProfile /> : <LoginForm />}
         </Col>
         <Col xs={24} md={12}>
           {children}

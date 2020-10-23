@@ -15,7 +15,7 @@ import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
 import wrapper from '../store/configureStore';
 
 const Home = () => {
-  const { user } = useSelector((state) => state.user);
+  const { me } = useSelector((state) => state.user);
   const { mainPosts, postsLoadLoading, hasPosts, retweetError } = useSelector(
     (state) => state.post,
   );
@@ -54,7 +54,7 @@ const Home = () => {
         <title>메인화면 | NodeBird</title>
       </Head>
       <AppLayout>
-        {user && <PostForm />}
+        {me && <PostForm />}
         {mainPosts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}

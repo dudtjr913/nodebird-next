@@ -16,23 +16,23 @@ import {
 import wrapper from '../store/configureStore';
 
 const Profile = () => {
-  const { user } = useSelector((state) => state.user);
+  const { me } = useSelector((state) => state.user);
   useEffect(() => {
-    if (!user) {
+    if (!me) {
       Router.replace('/');
     }
-  }, [user]);
+  }, [me]);
 
   return (
     <>
       <Head>
         <title>프로필</title>
       </Head>
-      {user && (
+      {me && (
         <AppLayout>
           <NicknameEditForm />
-          <FollowList data={user.Followings} header="팔로잉" />
-          <FollowList data={user.Followers} header="팔로워" />{' '}
+          <FollowList data={me.Followings} header="팔로잉" />
+          <FollowList data={me.Followers} header="팔로워" />{' '}
         </AppLayout>
       )}
     </>

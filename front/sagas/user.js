@@ -32,6 +32,9 @@ import {
   REMOVE_MY_FOLLOWER_REQUEST,
   REMOVE_MY_FOLLOWER_SUCCESS,
   REMOVE_MY_FOLLOWER_FAILURE,
+  LOAD_USER_FAILURE,
+  LOAD_USER_REQUEST,
+  LOAD_USER_SUCCESS,
 } from '../reducers/user';
 
 function logInData(data) {
@@ -148,6 +151,25 @@ function* loadMyInfo() {
   }
 }
 
+function loadUserData(data) {
+  return axios.get(`/user/${data}`);
+}
+
+function* loadUser(action) {
+  try {
+    const result = yield call(loadUserData, action.data);
+    yield put({
+      type: LOAD_USER_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: LOAD_USER_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 function loadMyFollowingsData() {
   return axios.get('/user/followings');
 }
@@ -254,6 +276,10 @@ function* watchLoadMyInfo() {
   yield takeLatest(LOAD_MY_INFO_REQUEST, loadMyInfo);
 }
 
+function* watchLoadUser() {
+  yield takeLatest(LOAD_USER_REQUEST, loadUser);
+}
+
 function* watchLoadMyFollowings() {
   yield takeLatest(LOAD_MY_FOLLOWINGS_REQUEST, loadMyFollowings);
 }
@@ -277,6 +303,7 @@ export default function* rootSaga() {
     fork(watchSignUp),
     fork(watchFollow),
     fork(watchUnfollow),
+    fork(watchLoadUser),
     fork(watchLoadMyInfo),
     fork(watchLoadMyFollowings),
     fork(watchLoadMyFollowers),

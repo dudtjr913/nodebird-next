@@ -21,6 +21,10 @@ export const initialState = {
   unfollowDone: false,
   unfollowError: false,
 
+  loadUserLoading: false,
+  loadUserDone: false,
+  loadUserError: false,
+
   loadMyInfoLoading: false,
   loadMyInfoDone: false,
   loadMyInfoError: false,
@@ -41,6 +45,7 @@ export const initialState = {
   changeNicknameDone: false,
   changeNicknameError: false,
 
+  me: null,
   user: null,
   signUpData: {},
   loginData: {},
@@ -68,6 +73,10 @@ export const FOLLOW_FAILURE = 'FOLLOW_FAILURE';
 export const UNFOLLOW_REQUEST = 'UNFOLLOW_REQUEST';
 export const UNFOLLOW_SUCCESS = 'UNFOLLOW_SUCCESS';
 export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE';
+
+export const LOAD_USER_REQUEST = 'LOAD_USER_REQUEST';
+export const LOAD_USER_SUCCESS = 'LOAD_USER_SUCCESS';
+export const LOAD_USER_FAILURE = 'LOAD_USER_FAILURE';
 
 export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
 export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
@@ -119,11 +128,11 @@ const reducer = (state = initialState, action) =>
         draft.logInDone = true;
         draft.logInError = false;
         draft.logOutDone = true;
-        draft.user = action.data;
+        draft.me = action.data;
         break;
 
       case LOG_IN_FAILURE:
-        draft.user = null;
+        draft.me = null;
         draft.logInLoading = false;
         draft.logInDone = false;
         draft.logInError = action.error;
@@ -139,7 +148,7 @@ const reducer = (state = initialState, action) =>
         draft.logOutLoading = false;
         draft.logOutDone = true;
         draft.logOutError = false;
-        draft.user = null;
+        draft.me = null;
         draft.signUpDone = false;
         break;
 
@@ -168,14 +177,14 @@ const reducer = (state = initialState, action) =>
         break;
 
       case ADD_POST_TO_ME:
-        draft.user.Posts.unshift({ id: action.data });
+        draft.me.Posts.unshift({ id: action.data });
         break;
 
       case REMOVE_POST_OF_ME: {
-        const removePost = draft.user.Posts.findIndex(
+        const removePost = draft.me.Posts.findIndex(
           (v) => v.id === action.data,
         );
-        draft.user.Posts.splice(removePost, 1);
+        draft.me.Posts.splice(removePost, 1);
         break;
       }
       case FOLLOW_REQUEST:
@@ -188,7 +197,7 @@ const reducer = (state = initialState, action) =>
         draft.followLoading = false;
         draft.followDone = true;
         draft.followError = false;
-        draft.user.Followings.push({ id: action.data.UserId });
+        draft.me.Followings.push({ id: action.data.UserId });
         break;
 
       case FOLLOW_FAILURE:
@@ -210,10 +219,10 @@ const reducer = (state = initialState, action) =>
           draft.unfollowLoading = false;
           draft.unfollowDone = true;
           draft.unfollowError = false;
-          const index = draft.user.Followings.findIndex(
+          const index = draft.me.Followings.findIndex(
             (v) => v.id === action.data.UserId,
           );
-          draft.user.Followings.splice(index, 1);
+          draft.me.Followings.splice(index, 1);
         }
         break;
 
@@ -221,6 +230,25 @@ const reducer = (state = initialState, action) =>
         draft.unfollowLoading = false;
         draft.unfollowDone = false;
         draft.unfollowError = action.error;
+        break;
+
+      case LOAD_USER_REQUEST:
+        draft.loadUserLoading = true;
+        draft.loadUserDone = false;
+        draft.loadUserError = false;
+        break;
+
+      case LOAD_USER_SUCCESS:
+        draft.loadUserLoading = false;
+        draft.loadUserDone = true;
+        draft.loadUserError = false;
+        draft.user = action.data;
+        break;
+
+      case LOAD_USER_FAILURE:
+        draft.loadUserLoading = false;
+        draft.loadUserDone = false;
+        draft.loadUserError = action.error;
         break;
 
       case LOAD_MY_INFO_REQUEST:
@@ -233,7 +261,7 @@ const reducer = (state = initialState, action) =>
         draft.loadMyInfoLoading = false;
         draft.loadMyInfoDone = true;
         draft.loadMyInfoError = false;
-        draft.user = action.data;
+        draft.me = action.data;
         break;
 
       case LOAD_MY_INFO_FAILURE:
@@ -252,7 +280,7 @@ const reducer = (state = initialState, action) =>
         draft.loadMyFollowingsLoading = false;
         draft.loadMyFollowingsDone = true;
         draft.loadMyFollowingsError = false;
-        draft.user.Followings = action.data;
+        draft.me.Followings = action.data;
         break;
 
       case LOAD_MY_FOLLOWINGS_FAILURE:
@@ -271,7 +299,7 @@ const reducer = (state = initialState, action) =>
         draft.loadMyFollowersLoading = false;
         draft.loadMyFollowersDone = true;
         draft.loadMyFollowersError = false;
-        draft.user.Followers = action.data;
+        draft.me.Followers = action.data;
         break;
 
       case LOAD_MY_FOLLOWERS_FAILURE:
@@ -286,11 +314,10 @@ const reducer = (state = initialState, action) =>
         break;
 
       case REMOVE_MY_FOLLOWER_SUCCESS: {
-        const followerIndex = draft.user.Followers.findIndex(
+        const followerIndex = draft.me.Followers.findIndex(
           (v) => v.id === action.data.id,
         );
-        console.log(followerIndex);
-        draft.user.Followers.splice(followerIndex, 1);
+        draft.me.Followers.splice(followerIndex, 1);
         draft.removeMyFollowerLoading = false;
         draft.removeMyFollowerDone = true;
         draft.removeMyFollowerError = false;
@@ -313,7 +340,7 @@ const reducer = (state = initialState, action) =>
         draft.changeNicknameLoading = false;
         draft.changeNicknameDone = true;
         draft.changeNicknameError = false;
-        draft.user.nickname = action.data;
+        draft.me.nickname = action.data;
         break;
 
       case CHANGE_NICKNAME_FAILURE:
