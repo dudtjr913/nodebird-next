@@ -17,6 +17,9 @@ import {
   LOAD_POST_REQUEST,
   LOAD_POST_SUCCESS,
   LOAD_POST_FAILURE,
+  LOAD_USER_POSTS_FAILURE,
+  LOAD_USER_POSTS_REQUEST,
+  LOAD_USER_POSTS_SUCCESS,
   ADD_LIKE_REQUEST,
   ADD_LIKE_SUCCESS,
   ADD_LIKE_FAILURE,
@@ -40,7 +43,6 @@ function loadPostsData(lastId) {
 function* loadPosts(action) {
   try {
     const result = yield call(loadPostsData, action.lastId);
-    yield delay(1000);
     yield put({
       type: LOAD_POSTS_SUCCESS,
       data: result.data,
@@ -67,6 +69,29 @@ function* loadPost(action) {
   } catch (err) {
     yield put({
       type: LOAD_POST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function loadUserPostsData(id, lastId) {
+  return axios.get(`/posts/user/${id}?lastId=${lastId || 0}`);
+}
+
+function* loadUserPosts(action) {
+  try {
+    const result = yield call(
+      loadUserPostsData,
+      action.data.id,
+      action.data.lastId,
+    );
+    yield put({
+      type: LOAD_USER_POSTS_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: LOAD_USER_POSTS_FAILURE,
       error: err.response.data,
     });
   }
@@ -226,6 +251,10 @@ function* watchLoadPost() {
   yield takeLatest(LOAD_POST_REQUEST, loadPost);
 }
 
+function* watchLoadUserPosts() {
+  yield takeLatest(LOAD_USER_POSTS_REQUEST, loadUserPosts);
+}
+
 function* watchAddPost() {
   yield takeLatest(ADD_POST_REQUEST, addPost);
 }
@@ -258,6 +287,7 @@ export default function* rootSaga() {
   yield all([
     fork(watchLoadPosts),
     fork(watchLoadPost),
+    fork(watchLoadUserPosts),
     fork(watchAddPost),
     fork(watchAddComment),
     fork(watchRemovePost),

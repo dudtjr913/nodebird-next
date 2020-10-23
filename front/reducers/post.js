@@ -15,6 +15,10 @@ export const initialState = {
   postLoadDone: false,
   postLoadError: false,
 
+  userPostsLoadLoading: false, // 선택한 유저의 포스트 로딩
+  userPostsLoadDone: false,
+  userPostsLoadError: false,
+
   postAddLoading: false, // 포스트 추가
   postAddDone: false,
   postAddError: false,
@@ -59,6 +63,10 @@ export const LOAD_POSTS_FAILURE = 'LOAD_POSTS_FAILURE';
 export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
 export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
 export const LOAD_POST_FAILURE = 'LOAD_POST_FAILURE';
+
+export const LOAD_USER_POSTS_REQUEST = 'LOAD_USER_POSTS_REQUEST';
+export const LOAD_USER_POSTS_SUCCESS = 'LOAD_USER_POSTS_SUCCESS';
+export const LOAD_USER_POSTS_FAILURE = 'LOAD_USER_POSTS_FAILURE';
 
 export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
 export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
@@ -169,6 +177,26 @@ const reducer = (state = initialState, action) =>
         draft.postLoadLoading = false;
         draft.postLoadDone = false;
         draft.postLoadError = action.error;
+        break;
+
+      case LOAD_USER_POSTS_REQUEST:
+        draft.userPostsLoadLoading = true;
+        draft.userPostsLoadDone = false;
+        draft.userPostsLoadError = false;
+        break;
+
+      case LOAD_USER_POSTS_SUCCESS:
+        draft.userPostsLoadLoading = false;
+        draft.userPostsLoadDone = true;
+        draft.userPostsLoadError = false;
+        Array.prototype.push.apply(draft.mainPosts, action.data);
+        draft.hasPosts = action.data.length === 10;
+        break;
+
+      case LOAD_USER_POSTS_FAILURE:
+        draft.userPostsLoadLoading = false;
+        draft.userPostsLoadDone = false;
+        draft.userPostsLoadError = action.error;
         break;
 
       case ADD_POST_REQUEST:
