@@ -15,6 +15,10 @@ export const initialState = {
   postLoadDone: false,
   postLoadError: false,
 
+  hashtagLoadLoading: false, // 개별 해쉬태그 로딩
+  hashtagLoadDone: false,
+  hashtagLoadError: false,
+
   userPostsLoadLoading: false, // 선택한 유저의 포스트 로딩
   userPostsLoadDone: false,
   userPostsLoadError: false,
@@ -63,6 +67,10 @@ export const LOAD_POSTS_FAILURE = 'LOAD_POSTS_FAILURE';
 export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
 export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
 export const LOAD_POST_FAILURE = 'LOAD_POST_FAILURE';
+
+export const LOAD_HASHTAG_REQUEST = 'LOAD_HASHTAG_REQUEST';
+export const LOAD_HASHTAG_SUCCESS = 'LOAD_HASHTAG_SUCCESS';
+export const LOAD_HASHTAG_FAILURE = 'LOAD_HASHTAG_FAILURE';
 
 export const LOAD_USER_POSTS_REQUEST = 'LOAD_USER_POSTS_REQUEST';
 export const LOAD_USER_POSTS_SUCCESS = 'LOAD_USER_POSTS_SUCCESS';
@@ -177,6 +185,26 @@ const reducer = (state = initialState, action) =>
         draft.postLoadLoading = false;
         draft.postLoadDone = false;
         draft.postLoadError = action.error;
+        break;
+
+      case LOAD_HASHTAG_REQUEST:
+        draft.hashtagLoadLoading = true;
+        draft.hashtagLoadDone = false;
+        draft.hashtagLoadError = false;
+        break;
+
+      case LOAD_HASHTAG_SUCCESS:
+        draft.hashtagLoadLoading = false;
+        draft.hashtagLoadDone = true;
+        draft.hashtagLoadError = false;
+        Array.prototype.push.apply(draft.mainPosts, action.data);
+        draft.hasPosts = action.data.length === 10;
+        break;
+
+      case LOAD_HASHTAG_FAILURE:
+        draft.hashtagLoadLoading = false;
+        draft.hashtagLoadDone = false;
+        draft.hashtagLoadError = action.error;
         break;
 
       case LOAD_USER_POSTS_REQUEST:

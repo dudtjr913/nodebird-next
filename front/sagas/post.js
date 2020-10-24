@@ -1,4 +1,4 @@
-import { put, all, fork, delay, takeLatest, call } from 'redux-saga/effects';
+import { put, all, fork, takeLatest, call } from 'redux-saga/effects';
 import axios from 'axios';
 
 import {
@@ -32,6 +32,9 @@ import {
   RETWEET_FAILURE,
   RETWEET_REQUEST,
   RETWEET_SUCCESS,
+  LOAD_HASHTAG_REQUEST,
+  LOAD_HASHTAG_SUCCESS,
+  LOAD_HASHTAG_FAILURE,
 } from '../reducers/post';
 
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
@@ -69,6 +72,29 @@ function* loadPost(action) {
   } catch (err) {
     yield put({
       type: LOAD_POST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function loadHashtagData(name, lastId) {
+  return axios.get(`/hashtag/${encodeURIComponent(name)}?lastId=${lastId}`);
+}
+
+function* loadHashtag(action) {
+  try {
+    const result = yield call(
+      loadHashtagData,
+      action.data.name,
+      action.data.lastId,
+    );
+    yield put({
+      type: LOAD_HASHTAG_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: LOAD_HASHTAG_FAILURE,
       error: err.response.data,
     });
   }
@@ -251,6 +277,10 @@ function* watchLoadPost() {
   yield takeLatest(LOAD_POST_REQUEST, loadPost);
 }
 
+function* watchLoadHashtag() {
+  yield takeLatest(LOAD_HASHTAG_REQUEST, loadHashtag);
+}
+
 function* watchLoadUserPosts() {
   yield takeLatest(LOAD_USER_POSTS_REQUEST, loadUserPosts);
 }
@@ -287,6 +317,7 @@ export default function* rootSaga() {
   yield all([
     fork(watchLoadPosts),
     fork(watchLoadPost),
+    fork(watchLoadHashtag),
     fork(watchLoadUserPosts),
     fork(watchAddPost),
     fork(watchAddComment),

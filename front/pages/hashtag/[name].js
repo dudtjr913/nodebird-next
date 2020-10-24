@@ -2,25 +2,22 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { END } from 'redux-saga';
 import Head from 'next/head';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
+import wrapper from '../../store/configureStore';
+import { LOAD_HASHTAG_REQUEST } from '../../reducers/post';
+import AppLayout from '../../components/AppLayout';
 import ScreenUp from '../../components/ScreenUp';
 import PostCard from '../../components/PostCard';
-import AppLayout from '../../components/AppLayout';
-import wrapper from '../../store/configureStore';
-import { LOAD_MY_INFO_REQUEST, LOAD_USER_REQUEST } from '../../reducers/user';
-import { LOAD_USER_POSTS_REQUEST } from '../../reducers/post';
+import { LOAD_MY_INFO_REQUEST } from '../../reducers/user';
 
-const User = () => {
+const HashTag = () => {
   const router = useRouter();
+  const { name } = router.query;
+  const { mainPosts, hashtagLoadLoading, hasPosts, retweetError } = useSelector(
+    (state) => state.post,
+  );
   const dispatch = useDispatch();
-  const { id } = router.query;
-  const {
-    mainPosts,
-    hasPosts,
-    userPostsLoadLoading,
-    retweetError,
-  } = useSelector((state) => state.post);
 
   useEffect(() => {
     if (retweetError) {
@@ -34,11 +31,11 @@ const User = () => {
         window.scrollY + document.documentElement.clientHeight >
         document.documentElement.scrollHeight - 400
       ) {
-        if (hasPosts && !userPostsLoadLoading) {
+        if (hasPosts && !hashtagLoadLoading) {
           const lastId = mainPosts[mainPosts.length - 1]?.id; // mainPosts가 존재할때만 lastId를 생성
           dispatch({
-            type: LOAD_USER_POSTS_REQUEST,
-            data: { id, lastId },
+            type: LOAD_HASHTAG_REQUEST,
+            data: { name, lastId },
           });
         }
       }
@@ -47,12 +44,12 @@ const User = () => {
     return () => {
       window.removeEventListener('scroll', handleOnscroll);
     };
-  }, [userPostsLoadLoading, hasPosts, mainPosts]);
+  }, [hashtagLoadLoading, hasPosts, mainPosts]);
 
   return (
     <>
       <Head>
-        <title>사용자 게시글 | NodeBird</title>
+        <title>#{name} | NodeBird</title>
       </Head>
       <AppLayout>
         {mainPosts.map((post) => (
@@ -73,12 +70,8 @@ export const getServerSideProps = wrapper.getServerSideProps(
         axios.defaults.headers.Cookie = cookie;
       }
       context.store.dispatch({
-        type: LOAD_USER_REQUEST,
-        data: context.params.id,
-      });
-      context.store.dispatch({
-        type: LOAD_USER_POSTS_REQUEST,
-        data: { id: context.params.id },
+        type: LOAD_HASHTAG_REQUEST,
+        data: { name: context.params.name },
       });
       context.store.dispatch({
         type: LOAD_MY_INFO_REQUEST,
@@ -91,4 +84,4 @@ export const getServerSideProps = wrapper.getServerSideProps(
   },
 );
 
-export default User;
+export default HashTag;

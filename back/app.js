@@ -2,6 +2,7 @@ const express = require('express');
 const postRouter = require('./routes/post');
 const userRouter = require('./routes/user');
 const postsRouter = require('./routes/posts');
+const hashtagRouter = require('./routes/hashtag');
 const db = require('./models');
 const cors = require('cors');
 const passport = require('passport');
@@ -60,6 +61,7 @@ app.get('/api', (req, res) => {
 app.use('/posts', postsRouter);
 app.use('/post', postRouter);
 app.use('/user', userRouter);
+app.use('/hashtag', hashtagRouter);
 
 app.listen(3065, () => {
   console.log('서버 실행 중');
