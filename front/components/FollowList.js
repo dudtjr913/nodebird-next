@@ -5,11 +5,12 @@ import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { UNFOLLOW_REQUEST, REMOVE_MY_FOLLOWER_REQUEST } from '../reducers/user';
 
-const FollowList = ({ data, header }) => {
+const FollowList = ({ data, header, moreData, hasMore }) => {
   const dispatch = useDispatch();
   const grid = useMemo(() => ({ gutter: 4, xs: 2, md: 3 }));
   const liststyle = useMemo(() => ({ marginBottom: 20, marginTop: 10 }));
   const divStyle = useMemo(() => ({ textAlign: 'center', margin: '10px 0' }));
+
   const handleOnRemoveFollow = useCallback(
     (userId) => () => {
       if (header === '팔로잉') {
@@ -27,6 +28,7 @@ const FollowList = ({ data, header }) => {
     },
     [],
   );
+
   return (
     <>
       <List
@@ -35,9 +37,11 @@ const FollowList = ({ data, header }) => {
         size="small"
         header={header}
         loadMore={
-          <div style={divStyle}>
-            <Button>더 보기</Button>
-          </div>
+          hasMore && (
+            <div style={divStyle}>
+              <Button onClick={moreData}>더 보기</Button>
+            </div>
+          )
         }
         bordered
         dataSource={data}
@@ -63,6 +67,8 @@ const FollowList = ({ data, header }) => {
 FollowList.propTypes = {
   header: PropTypes.string.isRequired,
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  moreData: PropTypes.func.isRequired,
+  hasMore: PropTypes.bool.isRequired,
 };
 
 export default FollowList;

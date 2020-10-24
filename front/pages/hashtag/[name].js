@@ -14,7 +14,7 @@ import { LOAD_MY_INFO_REQUEST } from '../../reducers/user';
 const HashTag = () => {
   const router = useRouter();
   const { name } = router.query;
-  const { mainPosts, hashtagLoadLoading, hasPosts, retweetError } = useSelector(
+  const { mainPosts, postsLoadLoading, hasPosts, retweetError } = useSelector(
     (state) => state.post,
   );
   const dispatch = useDispatch();
@@ -31,7 +31,7 @@ const HashTag = () => {
         window.scrollY + document.documentElement.clientHeight >
         document.documentElement.scrollHeight - 400
       ) {
-        if (hasPosts && !hashtagLoadLoading) {
+        if (hasPosts && !postsLoadLoading) {
           const lastId = mainPosts[mainPosts.length - 1]?.id; // mainPosts가 존재할때만 lastId를 생성
           dispatch({
             type: LOAD_HASHTAG_REQUEST,
@@ -44,7 +44,7 @@ const HashTag = () => {
     return () => {
       window.removeEventListener('scroll', handleOnscroll);
     };
-  }, [hashtagLoadLoading, hasPosts, mainPosts]);
+  }, [postsLoadLoading, hasPosts, mainPosts]);
 
   return (
     <>

@@ -47,11 +47,12 @@ export const initialState = {
 
   me: null,
   user: null,
-  signUpData: {},
-  loginData: {},
 
   followingPostId: null,
   unfollowingPostId: null,
+
+  hasMoreFollowings: true, // 팔로워, 팔로잉 데이터를 더 가지고 있는지
+  hasMoreFollowers: true,
 };
 
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
@@ -281,6 +282,7 @@ const reducer = (state = initialState, action) =>
         draft.loadMyFollowingsDone = true;
         draft.loadMyFollowingsError = false;
         draft.me.Followings = action.data;
+        draft.hasMoreFollowings = action.data.length === 3;
         break;
 
       case LOAD_MY_FOLLOWINGS_FAILURE:
@@ -300,6 +302,7 @@ const reducer = (state = initialState, action) =>
         draft.loadMyFollowersDone = true;
         draft.loadMyFollowersError = false;
         draft.me.Followers = action.data;
+        draft.hasMoreFollowers = action.data.length === 3;
         break;
 
       case LOAD_MY_FOLLOWERS_FAILURE:

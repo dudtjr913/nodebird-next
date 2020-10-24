@@ -3,6 +3,7 @@ const { User, Post } = require('../models');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
+const { Op } = require('sequelize');
 
 const router = express.Router();
 
@@ -161,6 +162,7 @@ router.get('/followers', isLoggedIn, async (req, res, next) => {
       return res.status(403).send('로그인이 필요합니다.');
     }
     const followers = await user.getFollowers({
+      limit: parseInt(req.query.limit, 10),
       attributes: ['id', 'nickname'],
     });
     res.status(200).json(followers);
@@ -180,6 +182,7 @@ router.get('/followings', isLoggedIn, async (req, res, next) => {
       return res.status(403).send('로그인이 필요합니다.');
     }
     const followings = await user.getFollowings({
+      limit: parseInt(req.query.limit, 10),
       attributes: ['id', 'nickname'],
     });
     res.status(200).json(followings);

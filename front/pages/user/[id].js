@@ -15,12 +15,9 @@ const User = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { id } = router.query;
-  const {
-    mainPosts,
-    hasPosts,
-    userPostsLoadLoading,
-    retweetError,
-  } = useSelector((state) => state.post);
+  const { mainPosts, hasPosts, postsLoadLoading, retweetError } = useSelector(
+    (state) => state.post,
+  );
 
   useEffect(() => {
     if (retweetError) {
@@ -34,7 +31,7 @@ const User = () => {
         window.scrollY + document.documentElement.clientHeight >
         document.documentElement.scrollHeight - 400
       ) {
-        if (hasPosts && !userPostsLoadLoading) {
+        if (hasPosts && !postsLoadLoading) {
           const lastId = mainPosts[mainPosts.length - 1]?.id; // mainPosts가 존재할때만 lastId를 생성
           dispatch({
             type: LOAD_USER_POSTS_REQUEST,
@@ -47,7 +44,7 @@ const User = () => {
     return () => {
       window.removeEventListener('scroll', handleOnscroll);
     };
-  }, [userPostsLoadLoading, hasPosts, mainPosts]);
+  }, [postsLoadLoading, hasPosts, mainPosts]);
 
   return (
     <>

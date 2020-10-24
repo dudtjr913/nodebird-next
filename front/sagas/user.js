@@ -170,13 +170,13 @@ function* loadUser(action) {
   }
 }
 
-function loadMyFollowingsData() {
-  return axios.get('/user/followings');
+function loadMyFollowingsData(limit) {
+  return axios.get(`/user/followings?limit=${limit}`);
 }
 
-function* loadMyFollowings() {
+function* loadMyFollowings(action) {
   try {
-    const result = yield call(loadMyFollowingsData);
+    const result = yield call(loadMyFollowingsData, action.limit);
     yield put({
       type: LOAD_MY_FOLLOWINGS_SUCCESS,
       data: result.data.map((v) => ({
@@ -192,13 +192,13 @@ function* loadMyFollowings() {
   }
 }
 
-function loadMyFollowersData() {
-  return axios.get('/user/followers');
+function loadMyFollowersData(limit) {
+  return axios.get(`/user/followers?limit=${limit}`);
 }
 
-function* loadMyFollowers() {
+function* loadMyFollowers(action) {
   try {
-    const result = yield call(loadMyFollowersData);
+    const result = yield call(loadMyFollowersData, action.limit);
     yield put({
       type: LOAD_MY_FOLLOWERS_SUCCESS,
       data: result.data.map((v) => ({

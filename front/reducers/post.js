@@ -15,14 +15,6 @@ export const initialState = {
   postLoadDone: false,
   postLoadError: false,
 
-  hashtagLoadLoading: false, // 개별 해쉬태그 로딩
-  hashtagLoadDone: false,
-  hashtagLoadError: false,
-
-  userPostsLoadLoading: false, // 선택한 유저의 포스트 로딩
-  userPostsLoadDone: false,
-  userPostsLoadError: false,
-
   postAddLoading: false, // 포스트 추가
   postAddDone: false,
   postAddError: false,
@@ -147,13 +139,15 @@ const reducer = (state = initialState, action) =>
         draft.removeLikeDone = false;
         draft.removeLikeError = action.error;
         break;
-
+      case LOAD_USER_POSTS_REQUEST:
+      case LOAD_HASHTAG_REQUEST:
       case LOAD_POSTS_REQUEST:
         draft.postsLoadLoading = true;
         draft.postsLoadDone = false;
         draft.postsLoadError = false;
         break;
-
+      case LOAD_USER_POSTS_SUCCESS:
+      case LOAD_HASHTAG_SUCCESS:
       case LOAD_POSTS_SUCCESS:
         draft.postsLoadLoading = false;
         draft.postsLoadDone = true;
@@ -161,7 +155,8 @@ const reducer = (state = initialState, action) =>
         Array.prototype.push.apply(draft.mainPosts, action.data);
         draft.hasPosts = action.data.length === 10;
         break;
-
+      case LOAD_USER_POSTS_FAILURE:
+      case LOAD_HASHTAG_FAILURE:
       case LOAD_POSTS_FAILURE:
         draft.postsLoadLoading = false;
         draft.postsLoadDone = false;
@@ -185,46 +180,6 @@ const reducer = (state = initialState, action) =>
         draft.postLoadLoading = false;
         draft.postLoadDone = false;
         draft.postLoadError = action.error;
-        break;
-
-      case LOAD_HASHTAG_REQUEST:
-        draft.hashtagLoadLoading = true;
-        draft.hashtagLoadDone = false;
-        draft.hashtagLoadError = false;
-        break;
-
-      case LOAD_HASHTAG_SUCCESS:
-        draft.hashtagLoadLoading = false;
-        draft.hashtagLoadDone = true;
-        draft.hashtagLoadError = false;
-        Array.prototype.push.apply(draft.mainPosts, action.data);
-        draft.hasPosts = action.data.length === 10;
-        break;
-
-      case LOAD_HASHTAG_FAILURE:
-        draft.hashtagLoadLoading = false;
-        draft.hashtagLoadDone = false;
-        draft.hashtagLoadError = action.error;
-        break;
-
-      case LOAD_USER_POSTS_REQUEST:
-        draft.userPostsLoadLoading = true;
-        draft.userPostsLoadDone = false;
-        draft.userPostsLoadError = false;
-        break;
-
-      case LOAD_USER_POSTS_SUCCESS:
-        draft.userPostsLoadLoading = false;
-        draft.userPostsLoadDone = true;
-        draft.userPostsLoadError = false;
-        Array.prototype.push.apply(draft.mainPosts, action.data);
-        draft.hasPosts = action.data.length === 10;
-        break;
-
-      case LOAD_USER_POSTS_FAILURE:
-        draft.userPostsLoadLoading = false;
-        draft.userPostsLoadDone = false;
-        draft.userPostsLoadError = action.error;
         break;
 
       case ADD_POST_REQUEST:
