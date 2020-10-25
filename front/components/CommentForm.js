@@ -2,9 +2,9 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { Input, Form, Button } from 'antd';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { addComment } from '../reducers/post';
+import { ADD_COMMENT_REQUEST, ADD_RECOMMENT_REQUEST } from '../reducers/post';
 
-const CommentForm = ({ post }) => {
+const CommentForm = ({ postId, commentId, reCommentDone }) => {
   const [comment, setComment] = useState('');
   const dispatch = useDispatch();
   const onChangeText = useCallback((e) => {
@@ -24,13 +24,26 @@ const CommentForm = ({ post }) => {
     if (!comment) {
       return alert('댓글을 작성해주세요.');
     }
-    return dispatch(
-      addComment({
+    if (commentId) {
+      dispatch({
+        type: ADD_RECOMMENT_REQUEST,
+        data: {
+          comment,
+          postId,
+          commentId,
+        },
+      });
+      return reCommentDone(null);
+    }
+    dispatch({
+      type: ADD_COMMENT_REQUEST,
+      data: {
         comment,
-        postId: post.id,
-      }),
-    );
-  }, [comment, post.id]);
+        postId,
+      },
+    });
+  }, [comment, postId, commentId]);
+
   return (
     <Form onFinish={onCommentSubmit} style={{ width: '90%', margin: 'auto' }}>
       <Form.Item>
@@ -56,23 +69,10 @@ const CommentForm = ({ post }) => {
 };
 
 CommentForm.propTypes = {
-  post: PropTypes.shape({
-    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    User: PropTypes.shape({
-      email: PropTypes.string,
-      nickname: PropTypes.string,
-    }),
-    content: PropTypes.string,
-    Images: PropTypes.arrayOf(PropTypes.object),
-    Comments: PropTypes.arrayOf(
-      PropTypes.shape({
-        User: PropTypes.shape({
-          nickname: PropTypes.string,
-        }),
-        content: PropTypes.string,
-      }),
-    ),
-  }).isRequired,
+  postId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  commentId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    .isRequired,
+  reCommentDone: PropTypes.func,
 };
 
 export default CommentForm;

@@ -27,6 +27,18 @@ export const initialState = {
   commentAddDone: false,
   commentAddError: false,
 
+  reCommentAddLoading: false, // 답글 추가
+  reCommentAddDone: false,
+  reCommentAddError: false,
+
+  commentRemoveLoading: false, // 댓글 삭제
+  commentRemoveDone: false,
+  commentRemoveError: false,
+
+  reCommentRemoveLoading: false, // 답글 삭제
+  reCommentRemoveDone: false,
+  reCommentRemoveError: false,
+
   addLikeLoading: false, // 좋아요 추가
   addLikeDone: false,
   addLikeError: false,
@@ -80,6 +92,18 @@ export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
 export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
 
+export const ADD_RECOMMENT_REQUEST = 'ADD_RECOMMENT_REQUEST';
+export const ADD_RECOMMENT_SUCCESS = 'ADD_RECOMMENT_SUCCESS';
+export const ADD_RECOMMENT_FAILURE = 'ADD_RECOMMENT_FAILURE';
+
+export const REMOVE_COMMENT_REQUEST = 'REMOVE_COMMENT_REQUEST';
+export const REMOVE_COMMENT_SUCCESS = 'REMOVE_COMMENT_SUCCESS';
+export const REMOVE_COMMENT_FAILURE = 'REMOVE_COMMENT_FAILURE';
+
+export const REMOVE_RECOMMENT_REQUEST = 'REMOVE_RECOMMENT_REQUEST';
+export const REMOVE_RECOMMENT_SUCCESS = 'REMOVE_RECOMMENT_SUCCESS';
+export const REMOVE_RECOMMENT_FAILURE = 'REMOVE_RECOMMENT_FAILURE';
+
 export const UPLOAD_IMAGES_REQUEST = 'UPLOAD_IMAGES_REQUEST';
 export const UPLOAD_IMAGES_SUCCESS = 'UPLOAD_IMAGES_SUCCESS';
 export const UPLOAD_IMAGES_FAILURE = 'UPLOAD_IMAGES_FAILURE';
@@ -89,8 +113,6 @@ export const RETWEET_SUCCESS = 'RETWEET_SUCCESS';
 export const RETWEET_FAILURE = 'RETWEET_FAILURE';
 
 export const REMOVE_UPLOAD_IMAGE = 'REMOVE_UPLOAD_IMAGE';
-
-export const addComment = (data) => ({ type: ADD_COMMENT_REQUEST, data });
 
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
@@ -221,6 +243,94 @@ const reducer = (state = initialState, action) =>
         draft.commentAddLoading = false;
         draft.commentAddDone = false;
         draft.commentAddError = action.error;
+        break;
+
+      case ADD_RECOMMENT_REQUEST:
+        draft.reCommentAddLoading = true;
+        draft.reCommentAddDone = false;
+        draft.reCommentAddError = false;
+        break;
+
+      case ADD_RECOMMENT_SUCCESS: {
+        const postIndex = draft.mainPosts.findIndex(
+          (v) => v.id === action.data.PostId,
+        );
+        const commentIndex = draft.mainPosts[postIndex].Comments.findIndex(
+          (v) => v.id === action.data.CommentId,
+        );
+        draft.mainPosts[postIndex].Comments[commentIndex].ReComments.push(
+          action.data,
+        );
+        draft.reCommentAddLoading = false;
+        draft.reCommentAddDone = true;
+        draft.reCommentAddError = false;
+        break;
+      }
+
+      case ADD_RECOMMENT_FAILURE:
+        draft.reCommentAddLoading = false;
+        draft.reCommentAddDone = false;
+        draft.reCommentAddError = action.error;
+        break;
+
+      case REMOVE_COMMENT_REQUEST:
+        draft.commentRemoveLoading = true;
+        draft.commentRemoveDone = false;
+        draft.commentRemoveError = false;
+        break;
+
+      case REMOVE_COMMENT_SUCCESS: {
+        const postIndex = draft.mainPosts.findIndex(
+          (v) => v.id === action.data.PostId,
+        );
+        console.log(postIndex);
+        const commentIndex = draft.mainPosts[postIndex].Comments.findIndex(
+          (v) => v.id === action.data.id,
+        );
+        draft.mainPosts[postIndex].Comments.splice(commentIndex, 1);
+        draft.commentRemoveLoading = false;
+        draft.commentRemoveDone = true;
+        draft.commentRemoveError = false;
+        break;
+      }
+
+      case REMOVE_COMMENT_FAILURE:
+        draft.commentRemoveLoading = false;
+        draft.commentRemoveDone = false;
+        draft.commentRemoveError = action.error;
+        break;
+
+      case REMOVE_RECOMMENT_REQUEST:
+        draft.reCommentRemoveLoading = true;
+        draft.reCommentRemoveDone = false;
+        draft.reCommentRemoveError = false;
+        break;
+
+      case REMOVE_RECOMMENT_SUCCESS: {
+        const postIndex = draft.mainPosts.findIndex(
+          (v) => v.id === action.data.PostId,
+        );
+        const commentIndex = draft.mainPosts[postIndex].Comments.findIndex(
+          (v) => v.id === action.data.CommentId,
+        );
+        const reCommentIndex = draft.mainPosts[postIndex].Comments[
+          commentIndex
+        ].ReComments.findIndex((v) => v.id === action.data.ReCommentId);
+
+        draft.mainPosts[postIndex].Comments[commentIndex].ReComments.splice(
+          reCommentIndex,
+          1,
+        );
+        draft.reCommentRemoveLoading = false;
+        draft.reCommentRemoveDone = true;
+        draft.reCommentRemoveError = false;
+        break;
+      }
+
+      case REMOVE_RECOMMENT_FAILURE:
+        draft.reCommentRemoveLoading = false;
+        draft.reCommentRemoveDone = false;
+        draft.reCommentRemoveError = action.error;
         break;
 
       case REMOVE_POST_REQUEST:

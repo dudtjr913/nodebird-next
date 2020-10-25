@@ -1,5 +1,5 @@
 const express = require('express');
-const { Post, Image, Comment, User } = require('../models');
+const { Post, Image, Comment, User, ReComment } = require('../models');
 const { Op } = require('sequelize');
 
 const router = express.Router();
@@ -25,6 +25,15 @@ router.get('/', async (req, res, next) => {
             {
               model: User, //댓글 작성자
               attributes: ['id', 'email', 'nickname'],
+            },
+            {
+              model: ReComment, // 답글
+              include: [
+                {
+                  model: User, // 답글 작성자
+                  attributes: ['id', 'email', 'nickname'],
+                },
+              ],
             },
           ],
         },
@@ -82,6 +91,15 @@ router.get('/user/:userId', async (req, res, next) => {
             {
               model: User, //댓글 작성자
               attributes: ['id', 'email', 'nickname'],
+            },
+            {
+              model: ReComment, // 답글
+              include: [
+                {
+                  model: User, // 답글 작성자
+                  attributes: ['id', 'email', 'nickname'],
+                },
+              ],
             },
           ],
         },

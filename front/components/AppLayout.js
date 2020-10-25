@@ -21,6 +21,9 @@ const AppLayout = ({ children }) => {
   }, []);
 
   const handleOnSearch = useCallback(() => {
+    if (!searchValue) {
+      return alert('검색어를 입력해주세요.');
+    }
     Router.push(`/hashtag/${searchValue}`);
   }, [searchValue]);
 

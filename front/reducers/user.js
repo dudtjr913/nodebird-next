@@ -217,13 +217,16 @@ const reducer = (state = initialState, action) =>
 
       case UNFOLLOW_SUCCESS:
         {
-          draft.unfollowLoading = false;
-          draft.unfollowDone = true;
-          draft.unfollowError = false;
           const index = draft.me.Followings.findIndex(
             (v) => v.id === action.data.UserId,
           );
+          if (draft.loadMyFollowersDone) {
+            draft.loadMyFollowingsDone.splice(index, 1);
+          }
           draft.me.Followings.splice(index, 1);
+          draft.unfollowLoading = false;
+          draft.unfollowDone = true;
+          draft.unfollowError = false;
         }
         break;
 
@@ -319,6 +322,7 @@ const reducer = (state = initialState, action) =>
           (v) => v.id === action.data.id,
         );
         draft.me.Followers.splice(followerIndex, 1);
+        draft.loadMyFollowersDone.splice(followerIndex, 1);
         draft.removeMyFollowerLoading = false;
         draft.removeMyFollowerDone = true;
         draft.removeMyFollowerError = false;

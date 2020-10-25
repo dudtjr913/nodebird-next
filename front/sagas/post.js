@@ -11,6 +11,9 @@ import {
   ADD_COMMENT_REQUEST,
   ADD_COMMENT_SUCCESS,
   ADD_COMMENT_FAILURE,
+  REMOVE_COMMENT_REQUEST,
+  REMOVE_COMMENT_FAILURE,
+  REMOVE_COMMENT_SUCCESS,
   LOAD_POSTS_REQUEST,
   LOAD_POSTS_SUCCESS,
   LOAD_POSTS_FAILURE,
@@ -35,6 +38,12 @@ import {
   LOAD_HASHTAG_REQUEST,
   LOAD_HASHTAG_SUCCESS,
   LOAD_HASHTAG_FAILURE,
+  ADD_RECOMMENT_REQUEST,
+  ADD_RECOMMENT_SUCCESS,
+  ADD_RECOMMENT_FAILURE,
+  REMOVE_RECOMMENT_REQUEST,
+  REMOVE_RECOMMENT_SUCCESS,
+  REMOVE_RECOMMENT_FAILURE,
 } from '../reducers/post';
 
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
@@ -160,6 +169,63 @@ function* addComment(action) {
   } catch (err) {
     yield put({
       type: ADD_COMMENT_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function addReCommentData(data) {
+  return axios.post(`/post/${data.postId}/recomment`, data);
+}
+
+function* addReComment(action) {
+  try {
+    const result = yield call(addReCommentData, action.data);
+    yield put({
+      type: ADD_RECOMMENT_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: ADD_RECOMMENT_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function removeCommentData(commentId) {
+  return axios.delete(`/post/${commentId}/comment`);
+}
+
+function* removeComment(action) {
+  try {
+    const result = yield call(removeCommentData, action.commentId);
+    yield put({
+      type: REMOVE_COMMENT_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: REMOVE_COMMENT_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function removeReCommentData(reCommentId) {
+  return axios.delete(`/post/${reCommentId}/recomment`);
+}
+
+function* removeReComment(action) {
+  try {
+    const result = yield call(removeReCommentData, action.reCommentId);
+    yield put({
+      type: REMOVE_RECOMMENT_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: REMOVE_RECOMMENT_FAILURE,
       error: err.response.data,
     });
   }
@@ -297,6 +363,18 @@ function* watchAddComment() {
   yield takeLatest(ADD_COMMENT_REQUEST, addComment);
 }
 
+function* watchAddReComment() {
+  yield takeLatest(ADD_RECOMMENT_REQUEST, addReComment);
+}
+
+function* watchRemoveComment() {
+  yield takeLatest(REMOVE_COMMENT_REQUEST, removeComment);
+}
+
+function* watchRemoveReComment() {
+  yield takeLatest(REMOVE_RECOMMENT_REQUEST, removeReComment);
+}
+
 function* watchAddLike() {
   yield takeLatest(ADD_LIKE_REQUEST, addLike);
 }
@@ -321,6 +399,9 @@ export default function* rootSaga() {
     fork(watchLoadUserPosts),
     fork(watchAddPost),
     fork(watchAddComment),
+    fork(watchAddReComment),
+    fork(watchRemoveComment),
+    fork(watchRemoveReComment),
     fork(watchRemovePost),
     fork(watchAddLike),
     fork(watchRemoveLike),

@@ -1,5 +1,5 @@
 const express = require('express');
-const { Post, User, Comment, Image, Hashtag } = require('../models');
+const { Post, User, Comment, Image, Hashtag, ReComment } = require('../models');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 const multer = require('multer');
 const path = require('path');
@@ -113,6 +113,15 @@ router.get('/:postId', async (req, res, next) => {
               model: User, //댓글 작성자
               attributes: ['id', 'email', 'nickname'],
             },
+            {
+              model: ReComment, // 답글
+              include: [
+                {
+                  model: User, // 답글 작성자
+                  attributes: ['id', 'email', 'nickname'],
+                },
+              ],
+            },
           ],
         },
         {
@@ -169,9 +178,81 @@ router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
           model: User, // 댓글 작성자
           attributes: ['id', 'email', 'nickname'],
         },
+        {
+          model: ReComment, // 답글
+        },
       ],
     });
     res.status(200).json(fullInfComment);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+router.post('/:postId/recomment', isLoggedIn, async (req, res, next) => {
+  try {
+    const post = await Post.findOne({
+      where: { id: req.params.postId },
+    });
+    if (!post) {
+      return res.status(403).send('존재하지 않는 게시글입니다.');
+    }
+    const comment = await ReComment.create({
+      content: req.body.comment,
+      UserId: req.user.id,
+      PostId: req.params.postId,
+      CommentId: req.body.commentId,
+    });
+    const fullInfReComment = await ReComment.findOne({
+      where: { id: comment.id },
+      include: [
+        {
+          model: User, // 댓글 작성자
+          attributes: ['id', 'email', 'nickname'],
+        },
+      ],
+    });
+    res.status(200).json(fullInfReComment);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+router.delete('/:commentId/comment', isLoggedIn, async (req, res, next) => {
+  try {
+    const comment = await Comment.findOne({
+      where: { id: req.params.commentId },
+    });
+    if (!comment) {
+      return res.status(403).send('존재하지 않는 댓글입니다.');
+    }
+    await ReComment.destroy({
+      where: { CommentId: req.params.commentId },
+    });
+    await Comment.destroy({
+      where: { id: req.params.commentId },
+    });
+    res.status(200).json(comment);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+router.delete('/:recommentId/recomment', isLoggedIn, async (req, res, next) => {
+  try {
+    const reComment = await ReComment.findOne({
+      where: { id: req.params.recommentId },
+    });
+    if (!reComment) {
+      return res.status(403).send('존재하지 않는 답글입니다.');
+    }
+    await ReComment.destroy({
+      where: { id: req.params.recommentId },
+    });
+    res.status(200).json(reComment);
   } catch (err) {
     console.error(err);
     next(err);
@@ -230,6 +311,15 @@ router.post('/:postId/retweet', isLoggedIn, async (req, res, next) => {
             {
               model: User,
               attributes: ['id', 'nickname', 'email'],
+            },
+            {
+              model: ReComment, // 답글
+              include: [
+                {
+                  model: User, // 답글 작성자
+                  attributes: ['id', 'email', 'nickname'],
+                },
+              ],
             },
           ],
         },
@@ -301,6 +391,12 @@ router.delete('/:postId/unlike', isLoggedIn, async (req, res, next) => {
 
 router.delete('/:postId', isLoggedIn, async (req, res, next) => {
   try {
+    await ReComment.destroy({
+      where: { PostId: req.params.postId },
+    });
+    await Comment.destroy({
+      where: { PostId: req.params.postId },
+    });
     await Post.destroy({
       where: {
         id: req.params.postId,

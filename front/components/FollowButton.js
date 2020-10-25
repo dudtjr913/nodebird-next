@@ -16,14 +16,22 @@ const FollowButton = ({ postId, userId }) => {
   const isFollowing = me.Followings.find((v) => v.id === userId);
 
   const handleOnFollow = useCallback(() => {
-    dispatch({
+    const reConfirm = window.confirm('정말로 팔로우를 하시겠습니까?');
+    if (!reConfirm) {
+      return null;
+    }
+    return dispatch({
       type: FOLLOW_REQUEST,
       data: { postId, userId },
     });
   }, [isFollowing]);
 
   const handleOnUnfollow = useCallback(() => {
-    dispatch({
+    const reConfirm = window.confirm('정말로 언팔로우를 하시겠습니까?');
+    if (!reConfirm) {
+      return null;
+    }
+    return dispatch({
       type: UNFOLLOW_REQUEST,
       data: { postId, userId },
     });

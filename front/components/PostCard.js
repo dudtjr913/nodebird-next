@@ -19,14 +19,18 @@ import {
   ADD_LIKE_REQUEST,
   REMOVE_LIKE_REQUEST,
   RETWEET_REQUEST,
+  REMOVE_COMMENT_REQUEST,
 } from '../reducers/post';
 import FollowButton from './FollowButton';
+import ReComment from './ReComment';
 
 moment.locale('ko');
 
 const PostCard = ({ post }) => {
   const dispatch = useDispatch();
   const [commented, setCommented] = useState(false);
+  const [reCommentedId, setReCommentedId] = useState(null);
+  const [reCommented, setReCommented] = useState(false);
   const { me } = useSelector((state) => state.user);
   const { postRemoveLoading } = useSelector((state) => state.post);
   const email = me?.email;
@@ -35,7 +39,6 @@ const PostCard = ({ post }) => {
     if (!me) {
       return alert('로그인이 필요합니다.');
     }
-    console.log(post.id);
     return dispatch({
       type: ADD_LIKE_REQUEST,
       data: post.id,
@@ -62,17 +65,59 @@ const PostCard = ({ post }) => {
     });
   }, [me]);
 
+  const removeComment = useCallback(
+    (commentId) => () => {
+      const reConfirm = window.confirm('정말로 댓글을 삭제하시겠습니까?');
+      if (!reConfirm) {
+        return null;
+      }
+      return dispatch({
+        type: REMOVE_COMMENT_REQUEST,
+        commentId,
+      });
+    },
+    [],
+  );
+
+  const addReComment = useCallback(
+    (id) => () => {
+      setReCommentedId((prev) => {
+        if (prev === id) {
+          return null;
+        }
+        return id;
+      });
+    },
+    [reCommentedId],
+  );
+
+  const reCommentShow = useCallback(
+    (commentId) => () => {
+      setReCommented((prev) => {
+        if (prev === commentId) {
+          return null;
+        }
+        return commentId;
+      });
+    },
+    [reCommented],
+  );
+
+  const handleOnComment = useCallback(() => setCommented((prev) => !prev), []);
+
   const handleOnPostRemove = useCallback(() => {
     if (!me) {
       return alert('로그인이 필요합니다.');
+    }
+    const reConfirm = window.confirm('정말로 게시글을 삭제하시겠습니까?');
+    if (!reConfirm) {
+      return null;
     }
     return dispatch({
       type: REMOVE_POST_REQUEST,
       data: post.id,
     });
   }, [me]);
-
-  const handleOnComment = useCallback(() => setCommented((prev) => !prev), []);
 
   const like = me && post.Likers.find((v) => v.id === post.User.id);
 
@@ -192,7 +237,7 @@ const PostCard = ({ post }) => {
       </Card>
       {commented && (
         <div>
-          {me && <CommentForm post={post} />}
+          {me && <CommentForm postId={post.id} commentId={0} />}
           <List
             style={{ width: '90%', margin: 'auto' }}
             header={`${post.Comments.length}개의 댓글`}
@@ -201,7 +246,33 @@ const PostCard = ({ post }) => {
             renderItem={(comments) => (
               <li>
                 <Comment
-                  actions={[<span key="reply-comment">답장</span>]}
+                  actions={[
+                    <span
+                      onClick={addReComment(comments.id)}
+                      role="presentation"
+                      key="reply-comment"
+                    >
+                      답장
+                    </span>,
+                    comments.ReComments.length >= 1 && (
+                      <span
+                        key="show-recomment"
+                        onClick={reCommentShow(comments.id)}
+                        role="presentation"
+                      >
+                        답글 보기
+                      </span>
+                    ),
+                    me && me.id === comments.User.id && (
+                      <span
+                        onClick={removeComment(comments.id)}
+                        role="presentation"
+                        key="remove-comment"
+                      >
+                        삭제
+                      </span>
+                    ),
+                  ]}
                   author={comments.User.nickname}
                   avatar={
                     <Link href={`/user/${comments.User.id}`}>
@@ -214,7 +285,18 @@ const PostCard = ({ post }) => {
                   }
                   content={comments.content}
                   datetime={<span>{moment(comments.createdAt).fromNow()}</span>}
-                />
+                >
+                  {me && comments.id === reCommentedId && (
+                    <CommentForm
+                      reCommentDone={setReCommentedId}
+                      postId={post.id}
+                      commentId={comments.id}
+                    />
+                  )}
+                  {comments.ReComments && reCommented === comments.id && (
+                    <ReComment comments={comments} />
+                  )}
+                </Comment>
               </li>
             )}
           />
