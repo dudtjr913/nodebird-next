@@ -52,9 +52,13 @@ const HashTag = () => {
         <title>#{name} | NodeBird</title>
       </Head>
       <AppLayout>
-        {mainPosts.map((post) => (
-          <PostCard key={post.id} post={post} />
-        ))}
+        {mainPosts.length === 0 ? (
+          <div style={{ textAlign: 'center' }}>
+            해당 해시태그 게시글이 존재하지 않습니다.
+          </div>
+        ) : (
+          mainPosts.map((post) => <PostCard key={post.id} post={post} />)
+        )}
         <ScreenUp />
       </AppLayout>
     </>

@@ -22,9 +22,9 @@ const CommentForm = ({ post }) => {
 
   const onCommentSubmit = useCallback(() => {
     if (!comment) {
-      return;
+      return alert('댓글을 작성해주세요.');
     }
-    dispatch(
+    return dispatch(
       addComment({
         comment,
         postId: post.id,

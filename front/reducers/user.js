@@ -273,41 +273,39 @@ const reducer = (state = initialState, action) =>
 
       case LOAD_MY_FOLLOWINGS_REQUEST:
         draft.loadMyFollowingsLoading = true;
-        draft.loadMyFollowingsDone = false;
+        draft.loadMyFollowingsDone = null;
         draft.loadMyFollowingsError = false;
         break;
 
       case LOAD_MY_FOLLOWINGS_SUCCESS:
         draft.loadMyFollowingsLoading = false;
-        draft.loadMyFollowingsDone = true;
+        draft.loadMyFollowingsDone = action.data;
         draft.loadMyFollowingsError = false;
-        draft.me.Followings = action.data;
         draft.hasMoreFollowings = action.data.length === 3;
         break;
 
       case LOAD_MY_FOLLOWINGS_FAILURE:
         draft.loadMyFollowingsLoading = false;
-        draft.loadMyFollowingsDone = false;
+        draft.loadMyFollowingsDone = null;
         draft.loadMyFollowingsError = action.error;
         break;
 
       case LOAD_MY_FOLLOWERS_REQUEST:
         draft.loadMyFollowersLoading = true;
-        draft.loadMyFollowersDone = false;
+        draft.loadMyFollowersDone = null;
         draft.loadMyFollowersError = false;
         break;
 
       case LOAD_MY_FOLLOWERS_SUCCESS:
         draft.loadMyFollowersLoading = false;
-        draft.loadMyFollowersDone = true;
+        draft.loadMyFollowersDone = action.data;
         draft.loadMyFollowersError = false;
-        draft.me.Followers = action.data;
         draft.hasMoreFollowers = action.data.length === 3;
         break;
 
       case LOAD_MY_FOLLOWERS_FAILURE:
         draft.loadMyFollowersLoading = false;
-        draft.loadMyFollowersDone = false;
+        draft.loadMyFollowersDone = null;
         draft.loadMyFollowersError = action.error;
         break;
 

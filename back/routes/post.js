@@ -60,7 +60,7 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
     }
     const fullInfPost = await Post.findOne({
       where: { id: post.id },
-      attributes: ['id', 'content'],
+      attributes: ['id', 'content', 'createdAt'],
       include: [
         {
           model: Comment,
@@ -164,7 +164,6 @@ router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
     });
     const fullInfComment = await Comment.findOne({
       where: { id: comment.id },
-      attributes: ['id', 'content', 'PostId'],
       include: [
         {
           model: User, // 댓글 작성자

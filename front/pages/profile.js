@@ -19,9 +19,13 @@ import wrapper from '../store/configureStore';
   axios.get(url, { withCredentials: true }).then((result) => result.data); */
 
 const Profile = () => {
-  const { me, hasMoreFollowers, hasMoreFollowings } = useSelector(
-    (state) => state.user,
-  );
+  const {
+    me,
+    hasMoreFollowers,
+    hasMoreFollowings,
+    loadMyFollowersDone,
+    loadMyFollowingsDone,
+  } = useSelector((state) => state.user);
   const [followingsLimit, setFollowingsLimit] = useState(3);
   const [followersLimit, setFollowersLimit] = useState(3);
   const dispatch = useDispatch();
@@ -71,13 +75,13 @@ const Profile = () => {
           <FollowList
             hasMore={hasMoreFollowings}
             moreData={followingsMore}
-            data={me.Followings}
+            data={loadMyFollowingsDone || []}
             header="팔로잉"
           />
           <FollowList
             hasMore={hasMoreFollowers}
             moreData={followersMore}
-            data={me.Followers}
+            data={loadMyFollowersDone || []}
             header="팔로워"
           />
         </AppLayout>

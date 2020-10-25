@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Card, Popover, Button, Avatar, Comment, List, Tooltip } from 'antd';
+import { Card, Popover, Button, Avatar, Comment, List } from 'antd';
 import {
   RetweetOutlined,
   HeartOutlined,
@@ -10,6 +10,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import Link from 'next/link';
 import CommentForm from './CommentForm';
 import PostImages from './PostImages';
 import PostCardContent from './PostCardContent';
@@ -20,6 +21,8 @@ import {
   RETWEET_REQUEST,
 } from '../reducers/post';
 import FollowButton from './FollowButton';
+
+moment.locale('ko');
 
 const PostCard = ({ post }) => {
   const dispatch = useDispatch();
@@ -69,12 +72,7 @@ const PostCard = ({ post }) => {
     });
   }, [me]);
 
-  const handleOnComment = useCallback(() => {
-    if (!me) {
-      return alert('로그인이 필요합니다.');
-    }
-    return setCommented((prev) => !prev);
-  }, [me]);
+  const handleOnComment = useCallback(() => setCommented((prev) => !prev), []);
 
   const like = me && post.Likers.find((v) => v.id === post.User.id);
 
@@ -118,7 +116,20 @@ const PostCard = ({ post }) => {
       >
         {post.RetweetId && post.Retweet ? (
           <Card
-            title={`${post.User.nickname}님이 리트윗한 게시글입니다.`}
+            title={
+              <div>
+                {`${post.User.nickname}님이 리트윗한 게시글입니다.`}
+                <span
+                  style={{
+                    fontSize: '14px',
+                    color: 'lightgray',
+                    paddingLeft: '10px',
+                  }}
+                >
+                  {moment(post.createdAt).fromNow()}
+                </span>
+              </div>
+            }
             cover={
               post.Retweet.Images[0] && (
                 <PostImages images={post.Retweet.Images} />
@@ -127,7 +138,13 @@ const PostCard = ({ post }) => {
           >
             <Card.Meta
               avatar={
-                <Avatar>{post.Retweet.User.email[0].toUpperCase()}</Avatar>
+                <Link href={`/user/${post.Retweet.User.id}`}>
+                  <a>
+                    <Avatar>
+                      {post.Retweet.User.nickname[0].toUpperCase()}
+                    </Avatar>
+                  </a>
+                </Link>
               }
               title={
                 <div>
@@ -145,13 +162,28 @@ const PostCard = ({ post }) => {
           </Card>
         ) : (
           <Card.Meta
-            avatar={<Avatar>{post.User.email[0].toUpperCase()}</Avatar>}
+            avatar={
+              <Link href={`/user/${post.User.id}`}>
+                <a>
+                  <Avatar>{post.User.nickname[0].toUpperCase()}</Avatar>
+                </a>
+              </Link>
+            }
             title={
               <div>
                 <span>{post.User.nickname}</span>
                 {me && email !== post.User.email && (
                   <FollowButton postId={post.id} userId={post.User.id} />
                 )}
+                <span
+                  style={{
+                    fontSize: '14px',
+                    color: 'lightgray',
+                    paddingLeft: '10px',
+                  }}
+                >
+                  {moment(post.createdAt).fromNow()}
+                </span>
               </div>
             }
             description={<PostCardContent postData={post.content} />}
@@ -170,18 +202,18 @@ const PostCard = ({ post }) => {
               <li>
                 <Comment
                   actions={[<span key="reply-comment">답장</span>]}
-                  author={comments.User.email}
+                  author={comments.User.nickname}
                   avatar={
-                    <Avatar>{comments.User.nickname[0].toUpperCase()}</Avatar>
+                    <Link href={`/user/${comments.User.id}`}>
+                      <a>
+                        <Avatar>
+                          {comments.User.nickname[0].toUpperCase()}
+                        </Avatar>
+                      </a>
+                    </Link>
                   }
                   content={comments.content}
-                  datetime={
-                    <Tooltip
-                      title={moment().subtract().format('YYYY-MM-DD HH:mm:ss')}
-                    >
-                      <span>{moment().subtract().fromNow()}</span>
-                    </Tooltip>
-                  }
+                  datetime={<span>{moment(comments.createdAt).fromNow()}</span>}
                 />
               </li>
             )}
@@ -210,6 +242,7 @@ PostCard.propTypes = {
         content: PropTypes.string,
       }),
     ),
+    createdAt: PropTypes.string,
     Likers: PropTypes.arrayOf(
       PropTypes.objectOf(
         PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

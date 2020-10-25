@@ -171,7 +171,7 @@ function* loadUser(action) {
 }
 
 function loadMyFollowingsData(limit) {
-  return axios.get(`/user/followings?limit=${limit}`);
+  return axios.get(`/user/followings?limit=${limit || 3}`);
 }
 
 function* loadMyFollowings(action) {
@@ -193,7 +193,7 @@ function* loadMyFollowings(action) {
 }
 
 function loadMyFollowersData(limit) {
-  return axios.get(`/user/followers?limit=${limit}`);
+  return axios.get(`/user/followers?limit=${limit || 3}`);
 }
 
 function* loadMyFollowers(action) {
