@@ -1,15 +1,17 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
 import { Input, Form, Button } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
 import {
   ADD_POST_REQUEST,
   UPLOAD_IMAGES_REQUEST,
   REMOVE_UPLOAD_IMAGE,
+  EDIT_POST_REQUEST,
 } from '../reducers/post';
 
-const PostForm = () => {
+const PostForm = ({ postEdit, content, postId, setPostEdit }) => {
   const InputRef = useRef();
-  const { imagePaths, postAddLoading, postAddDone } = useSelector(
+  const { imagePaths, postAddLoading, postAddDone, mainPosts } = useSelector(
     (state) => state.post,
   );
   const dispatch = useDispatch();
@@ -24,6 +26,12 @@ const PostForm = () => {
     }
   }, [postAddDone]);
 
+  useEffect(() => {
+    if (postEdit) {
+      setText(content);
+    }
+  }, [postEdit]);
+
   const onSubmit = useCallback(() => {
     if (!text || !text.trim()) {
       return alert('글을 작성해주세요.');
@@ -31,11 +39,23 @@ const PostForm = () => {
     const formData = new FormData();
     imagePaths.forEach((src) => formData.append('image', src));
     formData.append('content', text);
+    if (postEdit) {
+      const reConfirm = window.confirm('정말로 게시글을 수정하시겠습니까?');
+      if (!reConfirm) {
+        return null;
+      }
+      dispatch({
+        type: EDIT_POST_REQUEST,
+        data: formData,
+        postId,
+      });
+      return setPostEdit(false);
+    }
     return dispatch({
       type: ADD_POST_REQUEST,
       data: formData,
     });
-  }, [text, imagePaths]);
+  }, [text, imagePaths, postEdit]);
 
   const handleOnRef = useCallback(() => {
     console.log(InputRef.current);
@@ -114,6 +134,13 @@ const PostForm = () => {
       </div>
     </Form>
   );
+};
+
+PostForm.propTypes = {
+  postEdit: PropTypes.bool,
+  content: PropTypes.string,
+  postId: PropTypes.number,
+  setPostEdit: PropTypes.func,
 };
 
 export default PostForm;

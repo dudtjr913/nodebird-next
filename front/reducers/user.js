@@ -276,7 +276,6 @@ const reducer = (state = initialState, action) =>
 
       case LOAD_MY_FOLLOWINGS_REQUEST:
         draft.loadMyFollowingsLoading = true;
-        draft.loadMyFollowingsDone = null;
         draft.loadMyFollowingsError = false;
         break;
 
@@ -284,12 +283,13 @@ const reducer = (state = initialState, action) =>
         draft.loadMyFollowingsLoading = false;
         draft.loadMyFollowingsDone = action.data;
         draft.loadMyFollowingsError = false;
-        draft.hasMoreFollowings = action.data.length === 3;
+        draft.hasMoreFollowings =
+          draft.loadMyFollowingsDone.length !== draft.me.Followings.length;
+        // 로드한 팔로잉 수와 기존의 내 팔로잉 수가 같으면 더보기 버튼 없애기
         break;
 
       case LOAD_MY_FOLLOWINGS_FAILURE:
         draft.loadMyFollowingsLoading = false;
-        draft.loadMyFollowingsDone = null;
         draft.loadMyFollowingsError = action.error;
         break;
 
@@ -303,7 +303,9 @@ const reducer = (state = initialState, action) =>
         draft.loadMyFollowersLoading = false;
         draft.loadMyFollowersDone = action.data;
         draft.loadMyFollowersError = false;
-        draft.hasMoreFollowers = action.data.length === 3;
+        draft.hasMoreFollowers =
+          draft.loadMyFollowersDone.length !== draft.me.Followers.length;
+
         break;
 
       case LOAD_MY_FOLLOWERS_FAILURE:

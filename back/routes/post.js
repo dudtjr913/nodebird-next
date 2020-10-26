@@ -158,6 +158,60 @@ router.get('/:postId', async (req, res, next) => {
   }
 });
 
+router.patch('/:postId', isLoggedIn, upload.none(), async (req, res, next) => {
+  try {
+    const hashtags = req.body.content.match(/#[^\s#]+/g);
+    const post = await Post.findOne({
+      where: { id: req.params.postId, UserId: req.user.id },
+    });
+    if (!post) {
+      return res.status(403).send('존재하지 않는 게시물입니다.');
+    }
+    await Post.update(
+      { content: req.body.content },
+      { where: { id: post.id } },
+    );
+    if (hashtags) {
+      const result = [];
+      for (let i = 0; i < hashtags.length; i++) {
+        if (!result.find((v) => v === hashtags[i])) {
+          result.push(hashtags[i]);
+        }
+      }
+      const noRepResult = await Promise.all(
+        result.map((hash) =>
+          Hashtag.findOrCreate({
+            where: {
+              name: hash.slice(1).toLowerCase(),
+            },
+          }),
+        ),
+      );
+      await post.addHashtags(noRepResult.map((v) => v[0]));
+    }
+
+    if (req.body.image) {
+      if (Array.isArray(req.body.image)) {
+        const images = await Promise.all(
+          req.body.image.map((src) => Image.create({ src })),
+        );
+        await post.addImages(images);
+      } else {
+        const image = await Image.create({ src: req.body.image });
+        await post.addImages(image);
+      }
+    }
+    const requirePostInf = await Post.findOne({
+      where: { id: post.id },
+      attributes: ['id', 'content'],
+    });
+    res.status(200).json(requirePostInf);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
 router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
   try {
     const post = await Post.findOne({

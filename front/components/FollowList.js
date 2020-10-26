@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { UNFOLLOW_REQUEST, REMOVE_MY_FOLLOWER_REQUEST } from '../reducers/user';
 
-const FollowList = ({ data, header, moreData, hasMore }) => {
+const FollowList = ({ data, header, moreData, hasMore, loading }) => {
   const dispatch = useDispatch();
   const grid = useMemo(() => ({ gutter: 4, xs: 2, md: 3 }));
   const liststyle = useMemo(() => ({ marginBottom: 20, marginTop: 10 }));
@@ -14,13 +14,21 @@ const FollowList = ({ data, header, moreData, hasMore }) => {
   const handleOnRemoveFollow = useCallback(
     (userId) => () => {
       if (header === '팔로잉') {
-        dispatch({
+        const reConfirm = window.confirm('정말로 팔로잉을 삭제하시겠습니까?');
+        if (!reConfirm) {
+          return null;
+        }
+        return dispatch({
           type: UNFOLLOW_REQUEST,
           data: { userId },
         });
       }
       if (header === '팔로워') {
-        dispatch({
+        const reConfirm = window.confirm('정말로 팔로워를 삭제하시겠습니까?');
+        if (!reConfirm) {
+          return null;
+        }
+        return dispatch({
           type: REMOVE_MY_FOLLOWER_REQUEST,
           data: { userId },
         });
@@ -39,7 +47,9 @@ const FollowList = ({ data, header, moreData, hasMore }) => {
         loadMore={
           hasMore && (
             <div style={divStyle}>
-              <Button onClick={moreData}>더 보기</Button>
+              <Button loading={loading} onClick={moreData}>
+                더 보기
+              </Button>
             </div>
           )
         }
@@ -69,6 +79,7 @@ FollowList.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
   moreData: PropTypes.func.isRequired,
   hasMore: PropTypes.bool.isRequired,
+  loading: PropTypes.bool.isRequired,
 };
 
 export default FollowList;

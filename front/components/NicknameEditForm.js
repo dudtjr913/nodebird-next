@@ -13,11 +13,16 @@ const NicknameEditForm = () => {
   const dispatch = useDispatch();
   const { changeNicknameLoading } = useSelector((state) => state.user);
   const handleOnChangeNickname = useCallback((value) => {
-    dispatch({
+    const reConfirm = window.confirm('정말로 닉네임을 변경하시겠습니까?');
+    if (!reConfirm) {
+      return null;
+    }
+    return dispatch({
       type: CHANGE_NICKNAME_REQUEST,
       data: value,
     });
   }, []);
+
   return (
     <>
       <InputStyle

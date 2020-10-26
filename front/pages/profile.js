@@ -25,6 +25,9 @@ const Profile = () => {
     hasMoreFollowings,
     loadMyFollowersDone,
     loadMyFollowingsDone,
+    loadMyFollowersLoading,
+    loadMyFollowingsLoading,
+    changeNicknameError,
   } = useSelector((state) => state.user);
   const [followingsLimit, setFollowingsLimit] = useState(3);
   const [followersLimit, setFollowersLimit] = useState(3);
@@ -64,6 +67,12 @@ const Profile = () => {
     setFollowersLimit((prev) => prev + 3);
   }, []);
 
+  useEffect(() => {
+    if (changeNicknameError) {
+      return alert(changeNicknameError);
+    }
+  }, [changeNicknameError]);
+
   return (
     <>
       <Head>
@@ -75,12 +84,14 @@ const Profile = () => {
           <FollowList
             hasMore={hasMoreFollowings}
             moreData={followingsMore}
+            loading={loadMyFollowingsLoading}
             data={loadMyFollowingsDone || []}
             header="팔로잉"
           />
           <FollowList
             hasMore={hasMoreFollowers}
             moreData={followersMore}
+            loading={loadMyFollowersLoading}
             data={loadMyFollowersDone || []}
             header="팔로워"
           />

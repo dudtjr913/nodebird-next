@@ -19,6 +19,10 @@ export const initialState = {
   postAddDone: false,
   postAddError: false,
 
+  postEditLoading: false, // 포스트 수정
+  postEditDone: false,
+  postEditError: false,
+
   postRemoveLoading: false, // 포스트 삭제
   postRemoveDone: false,
   postRemoveError: false,
@@ -83,6 +87,10 @@ export const LOAD_USER_POSTS_FAILURE = 'LOAD_USER_POSTS_FAILURE';
 export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
 export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
 export const ADD_POST_FAILURE = 'ADD_POST_FAILURE';
+
+export const EDIT_POST_REQUEST = 'EDIT_POST_REQUEST';
+export const EDIT_POST_SUCCESS = 'EDIT_POST_SUCCESS';
+export const EDIT_POST_FAILURE = 'EDIT_POST_FAILURE';
 
 export const REMOVE_POST_REQUEST = 'REMOVE_POST_REQUEST';
 export const REMOVE_POST_SUCCESS = 'REMOVE_POST_SUCCESS';
@@ -222,6 +230,27 @@ const reducer = (state = initialState, action) =>
         draft.postAddLoading = false;
         draft.postAddDone = false;
         draft.postAddError = action.error;
+        break;
+
+      case EDIT_POST_REQUEST:
+        draft.postEditLoading = true;
+        draft.postEditDone = false;
+        draft.postEditError = false;
+        break;
+
+      case EDIT_POST_SUCCESS: {
+        const post = draft.mainPosts.find((v) => v.id === action.data.id);
+        post.content = action.data.content;
+        draft.postEditLoading = false;
+        draft.postEditDone = true;
+        draft.postEditError = false;
+        break;
+      }
+
+      case EDIT_POST_FAILURE:
+        draft.postEditLoading = false;
+        draft.postEditDone = false;
+        draft.postEditError = action.error;
         break;
 
       case ADD_COMMENT_REQUEST:

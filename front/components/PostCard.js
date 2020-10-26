@@ -14,6 +14,7 @@ import Link from 'next/link';
 import CommentForm from './CommentForm';
 import PostImages from './PostImages';
 import PostCardContent from './PostCardContent';
+import PostForm from './PostForm';
 import {
   REMOVE_POST_REQUEST,
   ADD_LIKE_REQUEST,
@@ -31,6 +32,7 @@ const PostCard = ({ post }) => {
   const [commented, setCommented] = useState(false);
   const [reCommentedId, setReCommentedId] = useState(null);
   const [reCommented, setReCommented] = useState(false);
+  const [postEdit, setPostEdit] = useState(false);
   const { me } = useSelector((state) => state.user);
   const { postRemoveLoading } = useSelector((state) => state.post);
   const email = me?.email;
@@ -119,6 +121,10 @@ const PostCard = ({ post }) => {
     });
   }, [me]);
 
+  const handleOnPostEdit = useCallback(() => {
+    setPostEdit((prev) => !prev);
+  }, []);
+
   const like = me && post.Likers.find((v) => v.id === post.User.id);
 
   return (
@@ -138,17 +144,19 @@ const PostCard = ({ post }) => {
             key="more"
             content={
               <Button.Group>
+                {email && email === post.User.email && !post.RetweetId && (
+                  <Button onClick={handleOnPostEdit}>
+                    {postEdit ? '취소' : '수정'}
+                  </Button>
+                )}
                 {email && email === post.User.email ? (
-                  <>
-                    <Button>수정</Button>
-                    <Button
-                      type="danger"
-                      onClick={handleOnPostRemove}
-                      loading={postRemoveLoading}
-                    >
-                      삭제
-                    </Button>
-                  </>
+                  <Button
+                    type="danger"
+                    onClick={handleOnPostRemove}
+                    loading={postRemoveLoading}
+                  >
+                    삭제
+                  </Button>
                 ) : (
                   <Button danger>신고</Button>
                 )}
@@ -231,7 +239,18 @@ const PostCard = ({ post }) => {
                 </span>
               </div>
             }
-            description={<PostCardContent postData={post.content} />}
+            description={
+              postEdit ? (
+                <PostForm
+                  postEdit={postEdit}
+                  content={post.content}
+                  postId={post.id}
+                  setPostEdit={setPostEdit}
+                />
+              ) : (
+                <PostCardContent postData={post.content} />
+              )
+            }
           />
         )}
       </Card>
