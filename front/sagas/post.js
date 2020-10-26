@@ -325,6 +325,7 @@ function* uploadImages(action) {
     yield put({
       type: UPLOAD_IMAGES_SUCCESS,
       data: result.data,
+      postId: action.postId,
     });
   } catch (err) {
     yield put({

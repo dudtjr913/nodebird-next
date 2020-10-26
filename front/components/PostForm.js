@@ -11,7 +11,7 @@ import {
 
 const PostForm = ({ postEdit, content, postId, setPostEdit }) => {
   const InputRef = useRef();
-  const { imagePaths, postAddLoading, postAddDone, mainPosts } = useSelector(
+  const { imagePaths, postAddLoading, postAddDone } = useSelector(
     (state) => state.post,
   );
   const dispatch = useDispatch();
@@ -67,9 +67,11 @@ const PostForm = ({ postEdit, content, postId, setPostEdit }) => {
     [].forEach.call(e.target.files, (value) => {
       imageFormData.append('image', value);
     });
+    console.log(postId);
     dispatch({
       type: UPLOAD_IMAGES_REQUEST,
       data: imageFormData,
+      postId,
     });
   }, []);
 
@@ -112,25 +114,28 @@ const PostForm = ({ postEdit, content, postId, setPostEdit }) => {
         올리기
       </Button>
       <div>
-        {imagePaths.map((v, i) => (
-          <div
-            style={{
-              marginTop: '10px',
-              display: 'inline-block',
-              maxWidth: '50%',
-            }}
-            key={v}
-          >
-            <img
-              style={{ maxWidth: '100%' }}
-              src={`http://localhost:3065/${v}`}
-              alt={v}
-            />
-            <div style={{ marginBottom: '10px' }}>
-              <Button onClick={handleOnRemoveImage(i)}>삭제</Button>
-            </div>
-          </div>
-        ))}
+        {imagePaths.map(
+          (v, i) =>
+            v.id === postId && (
+              <div
+                style={{
+                  marginTop: '10px',
+                  display: 'inline-block',
+                  maxWidth: '50%',
+                }}
+                key={v.imagePath}
+              >
+                <img
+                  style={{ maxWidth: '100%' }}
+                  src={`http://localhost:3065/${v.imagePath}`}
+                  alt={v.imagePath}
+                />
+                <div style={{ marginBottom: '10px' }}>
+                  <Button onClick={handleOnRemoveImage(i)}>삭제</Button>
+                </div>
+              </div>
+            ),
+        )}
       </div>
     </Form>
   );

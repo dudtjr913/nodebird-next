@@ -392,10 +392,12 @@ const reducer = (state = initialState, action) =>
         break;
 
       case UPLOAD_IMAGES_SUCCESS:
+        action.data.forEach((v) =>
+          draft.imagePaths.push({ id: action.postId, imagePath: v }),
+        );
         draft.uploadImagesLoading = false;
         draft.uploadImagesDone = true;
         draft.uploadImagesError = false;
-        action.data.forEach((v) => draft.imagePaths.push(v));
         break;
 
       case UPLOAD_IMAGES_FAILURE:
