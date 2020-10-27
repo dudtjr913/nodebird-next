@@ -15,6 +15,7 @@ import CommentForm from './CommentForm';
 import PostImages from './PostImages';
 import PostCardContent from './PostCardContent';
 import PostForm from './PostForm';
+import ReportForm from './ReportForm';
 import {
   REMOVE_POST_REQUEST,
   ADD_LIKE_REQUEST,
@@ -33,6 +34,7 @@ const PostCard = ({ post }) => {
   const [reCommentedId, setReCommentedId] = useState(null);
   const [reCommented, setReCommented] = useState(false);
   const [postEdit, setPostEdit] = useState(false);
+  const [report, setReport] = useState(false);
   const { me } = useSelector((state) => state.user);
   const { postRemoveLoading } = useSelector((state) => state.post);
   const email = me?.email;
@@ -105,6 +107,8 @@ const PostCard = ({ post }) => {
     [reCommented],
   );
 
+  const handleOnReport = useCallback(() => setReport((prev) => !prev), []);
+
   const handleOnComment = useCallback(() => setCommented((prev) => !prev), []);
 
   const handleOnPostRemove = useCallback(() => {
@@ -158,7 +162,9 @@ const PostCard = ({ post }) => {
                     삭제
                   </Button>
                 ) : (
-                  <Button danger>신고</Button>
+                  <Button onClick={handleOnReport} danger>
+                    신고
+                  </Button>
                 )}
               </Button.Group>
             }
@@ -321,6 +327,7 @@ const PostCard = ({ post }) => {
           />
         </div>
       )}
+      {report && <ReportForm setReport={setReport} />}
     </div>
   );
 };
