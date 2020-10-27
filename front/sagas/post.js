@@ -47,6 +47,9 @@ import {
   EDIT_POST_REQUEST,
   EDIT_POST_SUCCESS,
   EDIT_POST_FAILURE,
+  REPORT_POST_REQUEST,
+  REPORT_POST_SUCCESS,
+  REPORT_POST_FAILURE,
 } from '../reducers/post';
 
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
@@ -172,6 +175,25 @@ function* editPost(action) {
   } catch (err) {
     yield put({
       type: EDIT_POST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function reportPostData(data, postId) {
+  return axios.post(`/post/${postId}/report`, data);
+}
+
+function* reportPost(action) {
+  try {
+    const result = yield call(reportPostData, action.data, action.postId);
+    yield put({
+      type: REPORT_POST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: REPORT_POST_FAILURE,
       error: err.response.data,
     });
   }
@@ -386,6 +408,10 @@ function* watchRemovePost() {
   yield takeLatest(REMOVE_POST_REQUEST, removePost);
 }
 
+function* watchReportPost() {
+  yield takeLatest(REPORT_POST_REQUEST, reportPost);
+}
+
 function* watchAddComment() {
   yield takeLatest(ADD_COMMENT_REQUEST, addComment);
 }
@@ -426,6 +452,7 @@ export default function* rootSaga() {
     fork(watchLoadUserPosts),
     fork(watchAddPost),
     fork(watchEditPost),
+    fork(watchReportPost),
     fork(watchAddComment),
     fork(watchAddReComment),
     fork(watchRemoveComment),

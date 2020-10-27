@@ -27,6 +27,10 @@ export const initialState = {
   postRemoveDone: false,
   postRemoveError: false,
 
+  postReportLoading: false, // 포스트 신고
+  postReportDone: false,
+  postReportError: false,
+
   commentAddLoading: false, // 댓글 추가
   commentAddDone: false,
   commentAddError: false,
@@ -95,6 +99,10 @@ export const EDIT_POST_FAILURE = 'EDIT_POST_FAILURE';
 export const REMOVE_POST_REQUEST = 'REMOVE_POST_REQUEST';
 export const REMOVE_POST_SUCCESS = 'REMOVE_POST_SUCCESS';
 export const REMOVE_POST_FAILURE = 'REMOVE_POST_FAILURE';
+
+export const REPORT_POST_REQUEST = 'REPORT_POST_REQUEST';
+export const REPORT_POST_SUCCESS = 'REPORT_POST_SUCCESS';
+export const REPORT_POST_FAILURE = 'REPORT_POST_FAILURE';
 
 export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
@@ -383,6 +391,25 @@ const reducer = (state = initialState, action) =>
         draft.postRemoveLoading = false;
         draft.postRemoveDone = false;
         draft.postRemoveError = action.error;
+        break;
+
+      case REPORT_POST_REQUEST:
+        draft.postReportLoading = true;
+        draft.postReportDone = null;
+        draft.postReportError = false;
+        break;
+
+      case REPORT_POST_SUCCESS: {
+        draft.postReportLoading = false;
+        draft.postReportDone = action.data;
+        draft.postReportError = false;
+        break;
+      }
+
+      case REPORT_POST_FAILURE:
+        draft.postReportLoading = false;
+        draft.postReportDone = null;
+        draft.postReportError = action.error;
         break;
 
       case UPLOAD_IMAGES_REQUEST:

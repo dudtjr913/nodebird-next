@@ -327,7 +327,7 @@ const PostCard = ({ post }) => {
           />
         </div>
       )}
-      {report && <ReportForm setReport={setReport} />}
+      {report && <ReportForm setReport={setReport} postId={post.id} />}
     </div>
   );
 };
