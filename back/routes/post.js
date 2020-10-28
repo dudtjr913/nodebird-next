@@ -1,5 +1,13 @@
 const express = require('express');
-const { Post, User, Comment, Image, Hashtag, ReComment } = require('../models');
+const {
+  Post,
+  User,
+  Comment,
+  Image,
+  Hashtag,
+  ReComment,
+  Report,
+} = require('../models');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 const multer = require('multer');
 const path = require('path');
@@ -458,6 +466,45 @@ router.delete('/:postId', isLoggedIn, async (req, res, next) => {
       },
     });
     res.status(200).send(req.params.postId);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+router.post('/:postId/report', isLoggedIn, async (req, res, next) => {
+  try {
+    const post = await Post.findOne({
+      where: {
+        id: req.params.postId,
+      },
+    });
+    if (!post) {
+      return res.status(403).send('존재하지 않는 게시글입니다.');
+    }
+    if (req.body.reportValue) {
+      const exReport = await Report.findOrCreate({
+        where: {
+          UserId: req.user.id,
+          PostId: post.id,
+        },
+        defaults: {
+          reason: parseInt(req.body.reportValue),
+        },
+      });
+      if (exReport[1] === false) {
+        return res.status(403).send('이미 신고한 게시글입니다.');
+      }
+    } else if (req.body.etcValue) {
+      await Report.create({
+        UserId: req.user.id,
+        PostId: post.id,
+        reason: 4,
+        specific: req.body.etcValue,
+      });
+    }
+    console.log();
+    res.status(200).json(req.body.reportValue || req.body.etcValue);
   } catch (err) {
     console.error(err);
     next(err);

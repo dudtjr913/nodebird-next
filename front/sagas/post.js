@@ -180,13 +180,13 @@ function* editPost(action) {
   }
 }
 
-function reportPostData(data, postId) {
-  return axios.post(`/post/${postId}/report`, data);
+function reportPostData(data) {
+  return axios.post(`/post/${data.postId}/report`, data);
 }
 
 function* reportPost(action) {
   try {
-    const result = yield call(reportPostData, action.data, action.postId);
+    const result = yield call(reportPostData, action.data);
     yield put({
       type: REPORT_POST_SUCCESS,
       data: result.data,
