@@ -16,16 +16,23 @@ import wrapper from '../store/configureStore';
 
 const Home = () => {
   const { me } = useSelector((state) => state.user);
-  const { mainPosts, postsLoadLoading, hasPosts, retweetError } = useSelector(
-    (state) => state.post,
-  );
+  const {
+    mainPosts,
+    postsLoadLoading,
+    hasPosts,
+    retweetError,
+    postReportError,
+  } = useSelector((state) => state.post);
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (retweetError) {
       alert(retweetError);
     }
-  }, [retweetError]);
+    if (postReportError) {
+      alert(postReportError);
+    }
+  }, [retweetError, postReportError]);
 
   useEffect(() => {
     const handleOnscroll = () => {

@@ -482,19 +482,21 @@ router.post('/:postId/report', isLoggedIn, async (req, res, next) => {
     if (!post) {
       return res.status(403).send('존재하지 않는 게시글입니다.');
     }
+    const exReport = await Report.findOne({
+      where: {
+        UserId: req.user.id,
+        PostId: post.id,
+      },
+    });
+    if (exReport) {
+      return res.status(403).send('이미 신고한 게시글입니다.');
+    }
     if (req.body.reportValue) {
-      const exReport = await Report.findOrCreate({
-        where: {
-          UserId: req.user.id,
-          PostId: post.id,
-        },
-        defaults: {
-          reason: parseInt(req.body.reportValue),
-        },
+      await Report.create({
+        UserId: req.user.id,
+        PostId: post.id,
+        reason: parseInt(req.body.reportValue, 10),
       });
-      if (exReport[1] === false) {
-        return res.status(403).send('이미 신고한 게시글입니다.');
-      }
     } else if (req.body.etcValue) {
       await Report.create({
         UserId: req.user.id,
@@ -503,8 +505,13 @@ router.post('/:postId/report', isLoggedIn, async (req, res, next) => {
         specific: req.body.etcValue,
       });
     }
-    console.log();
-    res.status(200).json(req.body.reportValue || req.body.etcValue);
+    const fullInfReport = await Report.findAll({
+      where: {
+        UserId: req.user.id,
+      },
+      attributes: ['PostId'],
+    });
+    res.status(200).json(fullInfReport);
   } catch (err) {
     console.error(err);
     next(err);

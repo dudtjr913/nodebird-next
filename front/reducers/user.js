@@ -47,6 +47,7 @@ export const initialState = {
 
   me: null,
   user: null,
+  myReportLists: null,
 
   followingPostId: null,
   unfollowingPostId: null,
@@ -101,6 +102,7 @@ export const REMOVE_MY_FOLLOWER_FAILURE = 'REMOVE_MY_FOLLOWER_FAILURE';
 
 export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
 export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
+export const LOAD_MY_REPORT_LISTS = 'LOAD_MY_REPORT_LISTS';
 
 export const loginAction = (data) => ({
   type: LOG_IN_REQUEST,
@@ -354,6 +356,10 @@ const reducer = (state = initialState, action) =>
         draft.changeNicknameLoading = false;
         draft.changeNicknameDone = false;
         draft.changeNicknameError = action.error;
+        break;
+
+      case LOAD_MY_REPORT_LISTS:
+        draft.myReportLists = action.data;
         break;
 
       default:

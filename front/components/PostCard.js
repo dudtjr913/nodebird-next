@@ -35,7 +35,7 @@ const PostCard = ({ post }) => {
   const [reCommented, setReCommented] = useState(false);
   const [postEdit, setPostEdit] = useState(false);
   const [report, setReport] = useState(false);
-  const { me } = useSelector((state) => state.user);
+  const { me, myReportLists } = useSelector((state) => state.user);
   const { postRemoveLoading } = useSelector((state) => state.post);
   const email = me?.email;
 
@@ -107,7 +107,12 @@ const PostCard = ({ post }) => {
     [reCommented],
   );
 
-  const handleOnReport = useCallback(() => setReport((prev) => !prev), []);
+  const handleOnReport = useCallback(() => {
+    if (myReportLists && myReportLists.find((v) => v.PostId === post.id)) {
+      return alert('이미 신고한 게시글입니다.');
+    }
+    setReport((prev) => !prev);
+  }, [myReportLists]);
 
   const handleOnComment = useCallback(() => setCommented((prev) => !prev), []);
 

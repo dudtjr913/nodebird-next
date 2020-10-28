@@ -52,7 +52,11 @@ import {
   REPORT_POST_FAILURE,
 } from '../reducers/post';
 
-import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
+import {
+  ADD_POST_TO_ME,
+  LOAD_MY_REPORT_LISTS,
+  REMOVE_POST_OF_ME,
+} from '../reducers/user';
 
 function loadPostsData(lastId) {
   return axios.get(`/posts?lastId=${lastId || 0}`); // get에서 데이터를 넣는 법 -> 쿼리스트링
@@ -189,6 +193,10 @@ function* reportPost(action) {
     const result = yield call(reportPostData, action.data);
     yield put({
       type: REPORT_POST_SUCCESS,
+      data: result.data,
+    });
+    yield put({
+      type: LOAD_MY_REPORT_LISTS,
       data: result.data,
     });
   } catch (err) {

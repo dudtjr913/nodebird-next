@@ -395,20 +395,20 @@ const reducer = (state = initialState, action) =>
 
       case REPORT_POST_REQUEST:
         draft.postReportLoading = true;
-        draft.postReportDone = null;
+        draft.postReportDone = false;
         draft.postReportError = false;
         break;
 
       case REPORT_POST_SUCCESS: {
         draft.postReportLoading = false;
-        draft.postReportDone = action.data;
+        draft.postReportDone = true;
         draft.postReportError = false;
         break;
       }
 
       case REPORT_POST_FAILURE:
         draft.postReportLoading = false;
-        draft.postReportDone = null;
+        draft.postReportDone = false;
         draft.postReportError = action.error;
         break;
 
