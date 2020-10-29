@@ -37,7 +37,7 @@ const PostForm = ({ postEdit, content, postId, setPostEdit }) => {
       return alert('글을 작성해주세요.');
     }
     const formData = new FormData();
-    imagePaths.forEach((src) => formData.append('image', src));
+    imagePaths.forEach((src) => formData.append('image', src.imagePath));
     formData.append('content', text);
     if (postEdit) {
       const reConfirm = window.confirm('정말로 게시글을 수정하시겠습니까?');
