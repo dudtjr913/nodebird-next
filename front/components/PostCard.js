@@ -16,6 +16,7 @@ import PostImages from './PostImages';
 import PostCardContent from './PostCardContent';
 import PostForm from './PostForm';
 import ReportForm from './ReportForm';
+import PostEditImage from './PostEditImage';
 import {
   REMOVE_POST_REQUEST,
   ADD_LIKE_REQUEST,
@@ -140,7 +141,12 @@ const PostCard = ({ post }) => {
     <div>
       <Card
         style={{ width: '90%', margin: 'auto' }}
-        cover={post.Images[0] && <PostImages images={post.Images} />}
+        cover={
+          (post.Images[0] && !postEdit && (
+            <PostImages images={post.Images} />
+          )) ||
+          (post.Images[0] && postEdit && <PostEditImage images={post.Images} />)
+        }
         actions={[
           <RetweetOutlined key="retweet" onClick={onRetweet} />,
           like ? (

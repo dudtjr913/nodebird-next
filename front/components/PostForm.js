@@ -126,7 +126,7 @@ const PostForm = ({ postEdit, content, postId, setPostEdit }) => {
                 key={v.imagePath}
               >
                 <img
-                  style={{ maxWidth: '100%' }}
+                  style={{ maxWidth: '100%', maxHeight: '200px' }}
                   src={`http://localhost:3065/${v.imagePath}`}
                   alt={v.imagePath}
                 />
