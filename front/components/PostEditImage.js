@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { PlusOutlined, CloseOutlined } from '@ant-design/icons';
 
 const PostEditImage = ({ images }) => {
   const copyImages = [...images];
+  const handleOnRemove = useCallback(() => {
+    console.log('remove');
+  }, []);
   if (copyImages.length === 1) {
     return (
       <>
@@ -13,28 +16,46 @@ const PostEditImage = ({ images }) => {
           alt={copyImages[0].src}
           role="presentation"
         />
-        <CloseOutlined />
+        <div style={{ textAlign: 'center' }}>
+          <CloseOutlined onClick={handleOnRemove} />
+        </div>
       </>
     );
   }
   if (copyImages.length === 2) {
     return (
-      <>
-        <img
-          style={{ width: '50%', display: 'inline-block', maxHeight: '250px' }}
-          src={`http://localhost:3065/${copyImages[0].src}`}
-          alt={copyImages[0].src}
-          role="presentation"
-        />
-        <CloseOutlined />
-        <img
-          style={{ width: '50%', display: 'inline-block', maxHeight: '250px' }}
-          src={`http://localhost:3065/${copyImages[1].src}`}
-          alt={copyImages[1].src}
-          role="presentation"
-        />
-        <CloseOutlined />
-      </>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div
+          style={{
+            width: '50%',
+          }}
+        >
+          <img
+            style={{ width: '100%', maxHeight: '250px' }}
+            src={`http://localhost:3065/${copyImages[0].src}`}
+            alt={copyImages[0].src}
+            role="presentation"
+          />
+          <div style={{ textAlign: 'center' }}>
+            <CloseOutlined onClick={handleOnRemove} />
+          </div>
+        </div>
+        <div
+          style={{
+            width: '50%',
+          }}
+        >
+          <img
+            style={{ width: '100%', maxHeight: '250px' }}
+            src={`http://localhost:3065/${copyImages[1].src}`}
+            alt={copyImages[1].src}
+            role="presentation"
+          />
+          <div style={{ textAlign: 'center' }}>
+            <CloseOutlined onClick={handleOnRemove} />
+          </div>
+        </div>
+      </div>
     );
   }
   return (
