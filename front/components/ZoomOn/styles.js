@@ -49,6 +49,7 @@ export const ImageWrapper = styled.div`
   & img {
     margin: auto;
     max-width: 90%;
+    max-height: 75vh;
   }
 `;
 
