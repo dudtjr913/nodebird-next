@@ -11,9 +11,13 @@ import {
 
 const PostForm = ({ postEdit, content, postId, setPostEdit }) => {
   const InputRef = useRef();
-  const { imagePaths, postAddLoading, postAddDone } = useSelector(
-    (state) => state.post,
-  );
+  const {
+    imagePaths,
+    postAddLoading,
+    postAddDone,
+    toBeRemovedImages,
+    postEditing,
+  } = useSelector((state) => state.post);
   const dispatch = useDispatch();
   const [text, setText] = useState('');
   const onChangeText = useCallback((e) => {
@@ -37,8 +41,13 @@ const PostForm = ({ postEdit, content, postId, setPostEdit }) => {
       return alert('글을 작성해주세요.');
     }
     const formData = new FormData();
-    imagePaths.forEach((src) => formData.append('image', src.imagePath));
     formData.append('content', text);
+    if (postEdit && postEditing) {
+      imagePaths.forEach((v) => formData.append('image', v.imagePath));
+      toBeRemovedImages.forEach((v) => formData.append('image', v.imageId));
+    } else {
+      imagePaths.forEach((v) => formData.append('image', v.imagePath));
+    }
     if (postEdit) {
       const reConfirm = window.confirm('정말로 게시글을 수정하시겠습니까?');
       if (!reConfirm) {
@@ -55,7 +64,7 @@ const PostForm = ({ postEdit, content, postId, setPostEdit }) => {
       type: ADD_POST_REQUEST,
       data: formData,
     });
-  }, [text, imagePaths, postEdit]);
+  }, [text, imagePaths, postEdit, postEditing, toBeRemovedImages]);
 
   const handleOnRef = useCallback(() => {
     console.log(InputRef.current);
@@ -67,7 +76,6 @@ const PostForm = ({ postEdit, content, postId, setPostEdit }) => {
     [].forEach.call(e.target.files, (value) => {
       imageFormData.append('image', value);
     });
-    console.log(postId);
     dispatch({
       type: UPLOAD_IMAGES_REQUEST,
       data: imageFormData,
