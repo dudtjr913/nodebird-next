@@ -181,9 +181,7 @@ const reducer = (state = initialState, action) =>
 
       case REMOVE_LIKE_SUCCESS: {
         const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
-        const unlikeIndex = post.Likers.findIndex(
-          (v) => v.id === action.data.UserId,
-        );
+        const unlikeIndex = post.Likers.findIndex((v) => v.id === action.data.UserId);
         post.Likers.splice(unlikeIndex, 1);
         draft.removeLikeLoading = false;
         draft.removeLikeDone = true;
@@ -309,15 +307,11 @@ const reducer = (state = initialState, action) =>
         break;
 
       case ADD_RECOMMENT_SUCCESS: {
-        const postIndex = draft.mainPosts.findIndex(
-          (v) => v.id === action.data.PostId,
-        );
+        const postIndex = draft.mainPosts.findIndex((v) => v.id === action.data.PostId);
         const commentIndex = draft.mainPosts[postIndex].Comments.findIndex(
           (v) => v.id === action.data.CommentId,
         );
-        draft.mainPosts[postIndex].Comments[commentIndex].ReComments.push(
-          action.data,
-        );
+        draft.mainPosts[postIndex].Comments[commentIndex].ReComments.push(action.data);
         draft.reCommentAddLoading = false;
         draft.reCommentAddDone = true;
         draft.reCommentAddError = false;
@@ -337,9 +331,7 @@ const reducer = (state = initialState, action) =>
         break;
 
       case REMOVE_COMMENT_SUCCESS: {
-        const postIndex = draft.mainPosts.findIndex(
-          (v) => v.id === action.data.PostId,
-        );
+        const postIndex = draft.mainPosts.findIndex((v) => v.id === action.data.PostId);
         console.log(postIndex);
         const commentIndex = draft.mainPosts[postIndex].Comments.findIndex(
           (v) => v.id === action.data.id,
@@ -364,9 +356,7 @@ const reducer = (state = initialState, action) =>
         break;
 
       case REMOVE_RECOMMENT_SUCCESS: {
-        const postIndex = draft.mainPosts.findIndex(
-          (v) => v.id === action.data.PostId,
-        );
+        const postIndex = draft.mainPosts.findIndex((v) => v.id === action.data.PostId);
         const commentIndex = draft.mainPosts[postIndex].Comments.findIndex(
           (v) => v.id === action.data.CommentId,
         );
@@ -374,10 +364,7 @@ const reducer = (state = initialState, action) =>
           commentIndex
         ].ReComments.findIndex((v) => v.id === action.data.ReCommentId);
 
-        draft.mainPosts[postIndex].Comments[commentIndex].ReComments.splice(
-          reCommentIndex,
-          1,
-        );
+        draft.mainPosts[postIndex].Comments[commentIndex].ReComments.splice(reCommentIndex, 1);
         draft.reCommentRemoveLoading = false;
         draft.reCommentRemoveDone = true;
         draft.reCommentRemoveError = false;
@@ -400,9 +387,7 @@ const reducer = (state = initialState, action) =>
         draft.postRemoveLoading = false;
         draft.postRemoveDone = true;
         draft.postRemoveError = false;
-        const removePost = draft.mainPosts.findIndex(
-          (v) => v.id === action.data,
-        );
+        const removePost = draft.mainPosts.findIndex((v) => v.id === action.data);
         draft.mainPosts.splice(removePost, 1);
         break;
       }
@@ -439,9 +424,7 @@ const reducer = (state = initialState, action) =>
         break;
 
       case UPLOAD_IMAGES_SUCCESS:
-        action.data.forEach((v) =>
-          draft.imagePaths.push({ id: action.postId, imagePath: v }),
-        );
+        action.data.forEach((v) => draft.imagePaths.push({ id: action.postId, imagePath: v }));
         draft.uploadImagesLoading = false;
         draft.uploadImagesDone = true;
         draft.uploadImagesError = false;

@@ -1,13 +1,5 @@
 const express = require('express');
-const {
-  Post,
-  User,
-  Comment,
-  Image,
-  Hashtag,
-  ReComment,
-  Report,
-} = require('../models');
+const { Post, User, Comment, Image, Hashtag, ReComment, Report } = require('../models');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 const multer = require('multer');
 const path = require('path');
@@ -57,9 +49,7 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
 
     if (req.body.image) {
       if (Array.isArray(req.body.image)) {
-        const images = await Promise.all(
-          req.body.image.map((src) => Image.create({ src })),
-        );
+        const images = await Promise.all(req.body.image.map((src) => Image.create({ src })));
         await post.addImages(images);
       } else {
         const image = await Image.create({ src: req.body.image });
@@ -168,6 +158,7 @@ router.get('/:postId', async (req, res, next) => {
 
 router.patch('/:postId', isLoggedIn, upload.none(), async (req, res, next) => {
   try {
+    console.log(req.body.image);
     const hashtags = req.body.content.match(/#[^\s#]+/g);
     const post = await Post.findOne({
       where: { id: req.params.postId, UserId: req.user.id },
@@ -175,10 +166,7 @@ router.patch('/:postId', isLoggedIn, upload.none(), async (req, res, next) => {
     if (!post) {
       return res.status(403).send('존재하지 않는 게시물입니다.');
     }
-    await Post.update(
-      { content: req.body.content },
-      { where: { id: post.id } },
-    );
+    await Post.update({ content: req.body.content }, { where: { id: post.id } });
     if (hashtags) {
       const result = [];
       for (let i = 0; i < hashtags.length; i++) {
@@ -200,9 +188,7 @@ router.patch('/:postId', isLoggedIn, upload.none(), async (req, res, next) => {
 
     if (req.body.image) {
       if (Array.isArray(req.body.image)) {
-        const images = await Promise.all(
-          req.body.image.map((src) => Image.create({ src })),
-        );
+        const images = await Promise.all(req.body.image.map((src) => Image.create({ src })));
         await post.addImages(images);
       } else {
         const image = await Image.create({ src: req.body.image });
@@ -336,10 +322,7 @@ router.post('/:postId/retweet', isLoggedIn, async (req, res, next) => {
     if (!post) {
       return res.status(403).send('존재하지 않는 게시글입니다.');
     }
-    if (
-      req.user.id === post.UserId ||
-      (post.Retweet && post.Retweet.UserId === req.user.id)
-    ) {
+    if (req.user.id === post.UserId || (post.Retweet && post.Retweet.UserId === req.user.id)) {
       return res.status(403).send('자신의 글은 리트윗할 수 없습니다.');
     }
     const retweetTargetId = post.RetweetId || post.id;

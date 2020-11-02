@@ -11,13 +11,9 @@ import {
 
 const PostForm = ({ postEdit, content, postId, setPostEdit }) => {
   const InputRef = useRef();
-  const {
-    imagePaths,
-    postAddLoading,
-    postAddDone,
-    toBeRemovedImages,
-    postEditing,
-  } = useSelector((state) => state.post);
+  const { imagePaths, postAddLoading, postAddDone, toBeRemovedImages, postEditing } = useSelector(
+    (state) => state.post,
+  );
   const dispatch = useDispatch();
   const [text, setText] = useState('');
   const onChangeText = useCallback((e) => {
@@ -44,7 +40,7 @@ const PostForm = ({ postEdit, content, postId, setPostEdit }) => {
     formData.append('content', text);
     if (postEdit && postEditing) {
       imagePaths.forEach((v) => formData.append('image', v.imagePath));
-      toBeRemovedImages.forEach((v) => formData.append('image', v.imageId));
+      toBeRemovedImages.forEach((v) => formData.append('removeimage', v.imageId));
     } else {
       imagePaths.forEach((v) => formData.append('image', v.imagePath));
     }
@@ -104,21 +100,9 @@ const PostForm = ({ postEdit, content, postId, setPostEdit }) => {
         maxLength={150}
         placeholder="오늘 있었던 일 소개하기!"
       />
-      <input
-        type="file"
-        multiple
-        hidden
-        name="image"
-        ref={InputRef}
-        onChange={handleOnUpload}
-      />
+      <input type="file" multiple hidden name="image" ref={InputRef} onChange={handleOnUpload} />
       <Button onClick={handleOnRef}>이미지 업로드</Button>
-      <Button
-        loading={postAddLoading}
-        type="primary"
-        htmlType="submit"
-        style={{ float: 'right' }}
-      >
+      <Button loading={postAddLoading} type="primary" htmlType="submit" style={{ float: 'right' }}>
         {postEdit ? '수정하기' : '올리기'}
       </Button>
       <div>
