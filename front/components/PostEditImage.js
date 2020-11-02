@@ -1,12 +1,17 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
-import { PlusOutlined, CloseOutlined } from '@ant-design/icons';
+import { CloseOutlined } from '@ant-design/icons';
 
 const PostEditImage = ({ images }) => {
-  const copyImages = [...images];
-  const handleOnRemove = useCallback(() => {
-    console.log('remove');
-  }, []);
+  const [copyImages, setCopyImages] = useState([...images]);
+  const handleOnRemove = useCallback(
+    (id) => () => {
+      const remainedImage = copyImages.filter((v) => v.id !== id);
+      console.log(remainedImage);
+      setCopyImages(remainedImage);
+    },
+    [copyImages],
+  );
   if (copyImages.length === 1) {
     return (
       <>
@@ -17,7 +22,7 @@ const PostEditImage = ({ images }) => {
           role="presentation"
         />
         <div style={{ textAlign: 'center' }}>
-          <CloseOutlined onClick={handleOnRemove} />
+          <CloseOutlined onClick={handleOnRemove(copyImages[0].id)} />
         </div>
       </>
     );
@@ -37,7 +42,7 @@ const PostEditImage = ({ images }) => {
             role="presentation"
           />
           <div style={{ textAlign: 'center' }}>
-            <CloseOutlined onClick={handleOnRemove} />
+            <CloseOutlined onClick={handleOnRemove(copyImages[0].id)} />
           </div>
         </div>
         <div
@@ -52,7 +57,7 @@ const PostEditImage = ({ images }) => {
             role="presentation"
           />
           <div style={{ textAlign: 'center' }}>
-            <CloseOutlined onClick={handleOnRemove} />
+            <CloseOutlined onClick={handleOnRemove(copyImages[1].id)} />
           </div>
         </div>
       </div>
@@ -60,27 +65,27 @@ const PostEditImage = ({ images }) => {
   }
   return (
     <>
-      <img
-        role="presentation"
-        src={`http://localhost:3065/${copyImages[0].src}`}
-        style={{ width: '50%', display: 'inline-block', maxHeight: '250px' }}
-        alt={copyImages[0].src}
-      />
-      <div
-        role="presentation"
-        style={{
-          display: 'inline-block',
-          width: '50%',
-          textAlign: 'center',
-          maxHeight: '250px',
-          verticalAlign: 'middle',
-        }}
-      >
-        <PlusOutlined style={{ fontSize: '20px', cursor: 'pointer' }} />
-        <div style={{ fontSize: '20px', cursor: 'pointer' }}>
-          {`${copyImages.length - 1}개의 사진 더보기`}
-        </div>
-      </div>
+      <ul style={{ listStyle: 'none', padding: '0px' }}>
+        <li style={{ display: 'flex', flexFlow: 'wrap', alignItems: 'center' }}>
+          {copyImages.map((v) => (
+            <div key={v.src} style={{ width: '50%' }}>
+              <img
+                role="presentation"
+                src={`http://localhost:3065/${v.src}`}
+                style={{
+                  width: '100%',
+                  display: 'inline-block',
+                  maxHeight: '250px',
+                }}
+                alt={v.src}
+              />
+              <div style={{ textAlign: 'center' }}>
+                <CloseOutlined onClick={handleOnRemove(v.id)} />
+              </div>
+            </div>
+          ))}
+        </li>
+      </ul>
     </>
   );
 };
