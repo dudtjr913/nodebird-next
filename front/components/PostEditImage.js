@@ -1,14 +1,20 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { CloseOutlined } from '@ant-design/icons';
+import { useDispatch } from 'react-redux';
+import { TO_BE_REMOVED_IMAGE } from '../reducers/post';
 
-const PostEditImage = ({ images }) => {
+const PostEditImage = ({ images, postId }) => {
   const [copyImages, setCopyImages] = useState([...images]);
+  const dispatch = useDispatch();
   const handleOnRemove = useCallback(
     (id) => () => {
       const remainedImage = copyImages.filter((v) => v.id !== id);
-      console.log(remainedImage);
       setCopyImages(remainedImage);
+      dispatch({
+        type: TO_BE_REMOVED_IMAGE,
+        id,
+      });
     },
     [copyImages],
   );
@@ -92,6 +98,7 @@ const PostEditImage = ({ images }) => {
 
 PostEditImage.propTypes = {
   images: PropTypes.arrayOf(PropTypes.object).isRequired,
+  postId: PropTypes.number.isRequired,
 };
 
 export default PostEditImage;

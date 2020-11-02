@@ -23,6 +23,8 @@ import {
   REMOVE_LIKE_REQUEST,
   RETWEET_REQUEST,
   REMOVE_COMMENT_REQUEST,
+  POST_EDIT_CANCEL,
+  POST_EDIT_START,
 } from '../reducers/post';
 import FollowButton from './FollowButton';
 import ReComment from './ReComment';
@@ -37,7 +39,7 @@ const PostCard = ({ post }) => {
   const [postEdit, setPostEdit] = useState(false);
   const [report, setReport] = useState(false);
   const { me, myReportLists } = useSelector((state) => state.user);
-  const { postRemoveLoading } = useSelector((state) => state.post);
+  const { postRemoveLoading, postEditing } = useSelector((state) => state.post);
   const email = me?.email;
 
   const onLike = useCallback(() => {
@@ -132,8 +134,19 @@ const PostCard = ({ post }) => {
   }, [me]);
 
   const handleOnPostEdit = useCallback(() => {
+    if (!postEditing) {
+      dispatch({
+        type: POST_EDIT_START,
+      });
+    } else if (postEditing && postEdit) {
+      dispatch({
+        type: POST_EDIT_CANCEL,
+      });
+    } else {
+      return alert('수정은 한 번에 한 게시글만 가능합니다.');
+    }
     setPostEdit((prev) => !prev);
-  }, []);
+  }, [postEditing, postEdit]);
 
   const like = me && post.Likers.find((v) => v.id === post.User.id);
 
@@ -145,7 +158,9 @@ const PostCard = ({ post }) => {
           (post.Images[0] && !postEdit && (
             <PostImages images={post.Images} />
           )) ||
-          (post.Images[0] && postEdit && <PostEditImage images={post.Images} />)
+          (post.Images[0] && postEdit && (
+            <PostEditImage images={post.Images} postId={post.id} />
+          ))
         }
         actions={[
           <RetweetOutlined key="retweet" onClick={onRetweet} />,

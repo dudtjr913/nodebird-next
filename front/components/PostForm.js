@@ -111,7 +111,7 @@ const PostForm = ({ postEdit, content, postId, setPostEdit }) => {
         htmlType="submit"
         style={{ float: 'right' }}
       >
-        올리기
+        {postEdit ? '수정하기' : '올리기'}
       </Button>
       <div>
         {imagePaths.map(

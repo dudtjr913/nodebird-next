@@ -62,6 +62,9 @@ export const initialState = {
   retweetLoading: false, // 리트윗 요청
   retweetDone: false,
   retweetError: false,
+
+  toBeRemovedImages: [], // 삭제 가능성이 있는 이미지(요청 취소하면 삭제 안됨)
+  postEditing: false, // 포스트 수정 중(수정 중일때 다른 게시글 수정 불가능하게 하기 위함)
 };
 
 export const ADD_LIKE_REQUEST = 'ADD_LIKE_REQUEST';
@@ -129,10 +132,26 @@ export const RETWEET_SUCCESS = 'RETWEET_SUCCESS';
 export const RETWEET_FAILURE = 'RETWEET_FAILURE';
 
 export const REMOVE_UPLOAD_IMAGE = 'REMOVE_UPLOAD_IMAGE';
+export const TO_BE_REMOVED_IMAGE = 'TO_BE_REMOVED_IMAGE';
+export const POST_EDIT_START = 'POST_EDIT_START';
+export const POST_EDIT_CANCEL = ' POST_EDIT_CANCEL';
 
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
+      case TO_BE_REMOVED_IMAGE:
+        draft.toBeRemovedImages.push({ imageId: action.id });
+        break;
+
+      case POST_EDIT_START:
+        draft.postEditing = true;
+        break;
+
+      case POST_EDIT_CANCEL:
+        draft.toBeRemovedImages = [];
+        draft.postEditing = false;
+        break;
+
       case ADD_LIKE_REQUEST:
         draft.addLikeLoading = true;
         draft.addLikeDone = false;
