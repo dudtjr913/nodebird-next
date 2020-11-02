@@ -158,7 +158,7 @@ router.get('/:postId', async (req, res, next) => {
 
 router.patch('/:postId', isLoggedIn, upload.none(), async (req, res, next) => {
   try {
-    console.log(req.body.image);
+    console.log(req.body.removeimage);
     const hashtags = req.body.content.match(/#[^\s#]+/g);
     const post = await Post.findOne({
       where: { id: req.params.postId, UserId: req.user.id },
@@ -186,6 +186,14 @@ router.patch('/:postId', isLoggedIn, upload.none(), async (req, res, next) => {
       await post.addHashtags(noRepResult.map((v) => v[0]));
     }
 
+    if (req.body.removeimage) {
+      if (Array.isArray(req.body.removeimage)) {
+        await Promise.all(req.body.removeimage.map((v) => post.removeImages(v)));
+      } else {
+        await post.removeImages(req.body.removeimage);
+      }
+    }
+
     if (req.body.image) {
       if (Array.isArray(req.body.image)) {
         const images = await Promise.all(req.body.image.map((src) => Image.create({ src })));
@@ -198,6 +206,11 @@ router.patch('/:postId', isLoggedIn, upload.none(), async (req, res, next) => {
     const requirePostInf = await Post.findOne({
       where: { id: post.id },
       attributes: ['id', 'content'],
+      include: [
+        {
+          model: Image,
+        },
+      ],
     });
     res.status(200).json(requirePostInf);
   } catch (err) {

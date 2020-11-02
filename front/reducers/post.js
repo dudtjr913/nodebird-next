@@ -264,12 +264,15 @@ const reducer = (state = initialState, action) =>
         break;
 
       case EDIT_POST_SUCCESS: {
+        console.log(action.data);
         const post = draft.mainPosts.find((v) => v.id === action.data.id);
         post.content = action.data.content;
+        post.Images = action.data.Images;
         draft.postEditLoading = false;
         draft.postEditDone = true;
         draft.postEditError = false;
         draft.postEditing = false;
+        draft.imagePaths = [];
         break;
       }
 
