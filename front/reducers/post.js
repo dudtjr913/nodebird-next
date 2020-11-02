@@ -140,7 +140,7 @@ const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
       case TO_BE_REMOVED_IMAGE:
-        draft.toBeRemovedImages.push({ imageId: action.id });
+        draft.toBeRemovedImages.push(action.data);
         break;
 
       case POST_EDIT_START:
@@ -271,6 +271,7 @@ const reducer = (state = initialState, action) =>
         draft.postEditLoading = false;
         draft.postEditDone = true;
         draft.postEditError = false;
+        draft.postEditing = false;
         break;
       }
 
